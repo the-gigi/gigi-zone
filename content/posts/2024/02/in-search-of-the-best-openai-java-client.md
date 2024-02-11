@@ -41,7 +41,7 @@ make openai-java work with Anyscale. For starters, I wrote a little
 wrapper and combined some of the low-level components to create
 a [client that can accept any base URL](https://github.com/the-gigi/llm-playground-java/blob/main/src/main/java/com/github/the_gigi/llm/client/OpenAiJavaClientBuilder.java#L44).
 
-## 🤔 Evaluate Anyscale using openai-java 🤔
+### 🤔 Evaluate Anyscale using openai-java 🤔
 
 Cool. I was able to connect successfully to Anyscale, send it questions
 and get answers through the chat completion endpoint 😎. However, when
@@ -131,7 +131,7 @@ Content-Length: 593
 
 It works with both OpenAI and Anyscale.
 
-## 👀 Looking into openai-java 👀
+### 👀 Looking into openai-java 👀
 
 Alright, let's check under the hood. Maybe, this can be resolved.
 Unfortunately, I discovered that openai-java is not actively
@@ -158,7 +158,7 @@ Overall, the library doesn't seem like a solid foundation to build on.
 It is risky to keep using it even for accessing OpenAI, and it is a 
 blocker for accessing Anyscale.
 
-## ⚖️ Weighing the Alternatives ⚖️
+### ⚖️ Weighing the Alternatives ⚖️
 
 Alright, we can't use openai-java as is or wait for it to address the
 issues. What are the alternatives. Here are a few:
@@ -175,7 +175,7 @@ if no good library can be found).
 
 So, without further ado let's explore the space of OpenAI Java.
 
-## 🔍 Surveying the  Terrain 🔍
+### 🔍 Surveying the  Terrain 🔍
 
 Cool. We have a direction let's find us some OpenAI Java client
 libraries. The first step was checking out the OpenAI website, to look
@@ -198,7 +198,7 @@ to look into:
 
 Let's see how they did and who came on top!
 
-## 💜 openai-kotlin 💜
+### 💜 openai-kotlin 💜
 
 Kotlin is not Java! but, it's close enough :-) I never wrote a single
 line of Kotlin before or even looked at the language. Actually, before
@@ -263,7 +263,7 @@ I'll keep you posted...
 
 Let's move on to another library.
 
-## 🦜 LangChain4J 🦜
+### 🦜 LangChain4J 🦜
 
 [Langchain4J](https://github.com/langchain4j) is a large with a massive
 scope to integrate AI and LLM capabilities into Java applications.
@@ -333,7 +333,7 @@ Anyscale. But, there are some warning signals ⚠️.
 
 Let's check out our last contender...
 
-## 💎 simple-openai 💎
+### 💎 simple-openai 💎
 
 The [simple-openai](https://github.com/sashirestela/simple-openai)
 library is a hidden gem. It is literally hidden! I have no idea how I
