@@ -228,13 +228,9 @@ supports the new format of tools.
 Unfortunately, it has a serialization issue due to incorrect metadata
 for tool functions. Simple chat completion works, but completion with 
 tools fails. Again, it works with OpenAI, which is probably more 
-forgiving and ignoring the incorrect metadata. I opened
-a [GitHub issue](https://github.com/aallam/openai-kotlin/issues/301) 🐞.
-
+forgiving and ignoring the incorrect metadata. I opened an [issue](https://github.com/aallam/openai-kotlin/issues/301) 🐞.
 Ha! as I'm writing this, I checked the issue again. It was fixed just a
 few hours ago. How cool is that?
-
-![](openai-kotlin-issue-301-fixed.png)
 
 There is no new release yet, so I'll have to wait before testing it.
 I'll keep you posted...
