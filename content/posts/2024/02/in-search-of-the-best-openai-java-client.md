@@ -10,7 +10,8 @@ API-compatible services!
 
 <!--more-->
 
-Code is available upon request... or just clone: 
+Code is available upon request... or just clone:
+
 https://github.com/the-gigi/llm-playground-java
 
 Everybody and their sister is going crazy about the amazing abilities of
@@ -23,6 +24,7 @@ I wanted to test another LLM provider - [Anyscale](https://www.anyscale.com). An
 mostly known for providing a general-purpose AI platform based
 on [Ray](https://docs.ray.io/en/latest/), but they also provide an Endpoints service that hosts
 various open-source LLM foundation models.
+
 See https://www.anyscale.com/endpoints.
 
 The codebase I was targeting uses the [openai-java](https://github.com/TheoKanning/openai-java) library to
@@ -47,15 +49,13 @@ Cool. I was able to connect successfully to Anyscale, send it questions
 and get answers through the chat completion endpoint 😎. However, when
 I tried to add functions things fell apart.
 
-It turns out that **openai-java** is using a [deprecated format]
-(https://platform.openai.com/docs/api-reference/chat/create#chat-create-function_call) 
+It turns out that **openai-java** is using a [deprecated format](https://platform.openai.com/docs/api-reference/chat/create#chat-create-function_call) 
 for function calling.
 
 OpenAI still supports the deprecated syntax, so **openai-java** can do
 function calling against it. However, the Anyscale Endpoints service 
-apparently supports only the modern syntax.
-
-Here is what a request with functions looks like from **openai-java**
+apparently supports only the modern syntax. Here is what a request with
+functions looks like from **openai-java**
 
 ```
 Authorization: Bearer dummy
@@ -98,8 +98,7 @@ User-Agent: okhttp/4.10.0
 Note the deprecated  `function_call` and `functions` fields.
 
 The official [openai](https://github.com/openai/openai-python) Python
-library uses the new format of `tools` and
-`tool_choice`:
+library uses the new format of `tools` and `tool_choice`:
 
 ```
 Host: localhost:5000
@@ -215,28 +214,8 @@ At this point I had a LLMClient interface:
 
 ```
 public interface LLMClient {
-
-  /**
-   * Generates a completion for the given prompt using the default completion settings.
-   *
-   * @param prompt The prompt text.
-   * @return The generated completion.
-   */
   String complete(String prompt);
-
-  /**
-   * Generates a completion for the given completion request.
-   *
-   * @param completionRequest The completion request.
-   * @return The generated completion.
-   */
   String complete(CompletionRequest completionRequest);
-
-  /**
-   * Retrieves a list of available models.
-   *
-   * @return The list of available models.
-   */
   List<String> listModels();
 }
 ```
@@ -244,8 +223,7 @@ public interface LLMClient {
 The interface exposes just the capabilities I need at the moment, 
 but can be extended of course. I also had two concrete implementations 
 based on openai-java and openai-kotlin. The openai-kotlin library 
-supports the new format of tools:
-https://github.com/aallam/openai-kotlin/blob/main/guides/ChatToolCalls.md
+supports the new format of tools.
 
 Unfortunately, it has a serialization issue due to incorrect metadata
 for tool functions. Simple chat completion works, but completion with 
@@ -354,7 +332,7 @@ author - [Sashir Estela](https://github.com/sashirestela)- who is very
 motivated, responsive and interested in promoting open-simpleai and 
 makeing it available to more engineers.
 
-# Final words
+### Final words
 
 My journey into the world of large language models has just begun. There
 is a lot to learn and things change and evolve at neck-breaking speed 
