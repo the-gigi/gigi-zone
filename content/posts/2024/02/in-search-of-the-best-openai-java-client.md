@@ -1,13 +1,14 @@
 +++
 title = 'In Search of the Best OpenAI Java Client'
 date = 2024-02-03T15:31:17-08:00
-draft = true
 +++
 
 # In Search of the Best OpenAI Java Client
 
 Alright. This is going to be a long one. We're going on a wild hunt for the BEST Java library to talk to OpenAI 
 API-compatible services!
+
+<!--more-->
 
 Code is available upon request... or just clone https://github.com/the-gigi/llm-playground-java
 
