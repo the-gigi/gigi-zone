@@ -160,7 +160,7 @@ blocker for accessing Anyscale.
 ### ⚖️ Weighing the Alternatives ⚖️
 
 Alright, we can't use openai-java as is or wait for it to address the
-issues. What are the alternatives. Here are a few:
+issues. Here are a few alternatives:
 
 - Fork openai-java and take of business ourselves
 - Use the official Python openai library from Java
