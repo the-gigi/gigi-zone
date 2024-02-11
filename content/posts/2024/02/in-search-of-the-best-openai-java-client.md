@@ -176,7 +176,7 @@ So, without further ado let's explore the space of OpenAI Java.
 
 ### 🔍 Surveying the  Terrain 🔍
 
-Cool. We have a direction let's find us some OpenAI Java client
+Cool. We have a direction - let's find us some OpenAI Java client
 libraries. The first step was checking out the OpenAI website, to look
 for recommendations. OpenAI provide two official client libraries for
 Python and Javascript/Typescript. They also mention the Azure OpenAI 
@@ -187,9 +187,9 @@ See https://platform.openai.com/docs/libraries/java
 
 OK. No problem. Let's do an internet search...
 
-All kind of libraries come up. Based on a quick look into each one based
-on popularity, activity and overall impression I picked a few candidates
-to look into:
+All kinds of libraries come up. Based on a quick look into each one 
+based on popularity, activity and overall impression I picked a few
+candidates to look into:
 
 - [openai-kotlin](https://github.com/Aallam/openai-kotlin)
 - [langchain4j](https://github.com/langchain4j/langchain4j)
@@ -229,7 +229,7 @@ Unfortunately, it has a serialization issue due to incorrect metadata
 for tool functions. Simple chat completion works, but completion with 
 tools fails. Again, it works with OpenAI, which is probably more 
 forgiving and ignoring the incorrect metadata. I opened an [issue](https://github.com/aallam/openai-kotlin/issues/301) 🐞.
-Ha! as I'm writing this, I checked the issue again. It was fixed just a
+Ha! As I'm writing this, I checked the issue again. It was fixed just a
 few hours ago. How cool is that?
 
 There is no new release yet, so I'll have to wait before testing it.
@@ -239,8 +239,8 @@ Let's move on to another library.
 
 ### 🦜 langchain4j 🦜
 
-The [langchain4j](https://github.com/langchain4j) is a large with a 
-massive scope to integrate AI and LLM capabilities into Java 
+The [langchain4j](https://github.com/langchain4j) is a large project 
+with a massive scope to integrate AI and LLM capabilities into Java 
 applications. It is inspired by the well-known [langchain](https://github.com/langchain-ai/langchain)
 project as well as [Heystack](https://github.com/deepset-ai/haystack) and 
 [LlamaIndex](https://github.com/run-llama/llama_index).
@@ -298,8 +298,8 @@ under the cover we discover that Langchain4J uses yet another Java
 library - [openai4j](https://github.com/ai-for-java/openai4j) - to do
 the heavy lifting of implementing the OpenAI API and talking to LLM
 provider. Now, openai4j doesn't implement the OpenAI API fully. It does
-implement proper function calling with newer tool format, but it lacks
-other important features. The developers don't seem to be very 
+implement proper function calling with the newer tool format, but it 
+lacks other important features. The developers don't seem to be very 
 responsive. There are several issues that open for months. So, 
 Langchain4j on top of openai4j fulfills the current criteria of 
 supporting chat completion with function calling on both OpenAI and 
