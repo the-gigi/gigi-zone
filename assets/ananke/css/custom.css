@@ -1,0 +1,7 @@
+/* The ".mw8" class in Tachyons CSS originally sets the maximum width of content to 64rem.
+ * Ananke extensively utilizes this class. To accommodate broader content,
+ * I'm overriding the max-width to 96rem to ensure it takes precedence.
+ */
+.mw8 {
+  max-width: 96rem;
+}

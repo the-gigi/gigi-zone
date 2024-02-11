@@ -2,3 +2,5 @@ baseURL = 'https://the-gigi.github.io/gigi-zone/'
 languageCode = 'en-us'
 title = 'The Gigi Zone'
 theme = 'ananke'
+[params]
+    custom_css = ['custom.css']
