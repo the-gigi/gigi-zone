@@ -7,4 +7,14 @@ This repo hosts the [Gigi Zone](https://the-gigi.github.io/gigi-zone/) blog. It 
 Follow the instructions here:
 https://gohugo.io/getting-started/quick-start/
 
+## Hosting on Github
+
+THe blog is hosted on GitHub pages. Checkout https://gohugo.io/hosting-and-deployment/hosting-on-github/ 
+
+
+## Publishing a post
+
+Just make a post under posts, remove the `draft = true` line form the front matter and push :-)
+
+
 
