@@ -151,7 +151,7 @@ In addition to the deprecated function calling issue, there is no
 support for parallel function calling nor the new JSON format 
 (there are unmerged PRs to address these)
 
-Finally, the client has dependency with a known vulnerability
+Finally, the client has a dependency with a known vulnerability
 
 Overall, the library doesn't seem like a solid foundation to build on.
 It is risky to keep using it even for accessing OpenAI, and it is a 
@@ -162,7 +162,7 @@ blocker for accessing Anyscale.
 Alright, we can't use openai-java as is or wait for it to address the
 issues. Here are a few alternatives:
 
-- Fork openai-java and take of business ourselves
+- Fork openai-java and take care of business ourselves
 - Use the official Python openai library from Java
 - Build our own Java client library from scratch
 - Use another Java library
