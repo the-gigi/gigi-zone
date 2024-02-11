@@ -237,17 +237,17 @@ I'll keep you posted...
 
 Let's move on to another library.
 
-### 🦜 LangChain4J 🦜
+### 🦜 langchain4j 🦜
 
-[Langchain4J](https://github.com/langchain4j) is a large with a massive
-scope to integrate AI and LLM capabilities into Java applications.
-It is inspired by the well-known [Langchain](https://github.com/langchain-ai/langchain)
+The [langchain4j](https://github.com/langchain4j) is a large with a 
+massive scope to integrate AI and LLM capabilities into Java 
+applications. It is inspired by the well-known [langchain](https://github.com/langchain-ai/langchain)
 project as well as [Heystack](https://github.com/deepset-ai/haystack) and 
 [LlamaIndex](https://github.com/run-llama/llama_index).
 
 It has a unique approach where it introduces a magical abstraction
-called an AI Service, which is just a plain interface.
-You define and Langchain4J figures out what you want. For chat
+called an AI Service, which is just a plain interface. You define 
+an interface, and Langchain4J figures out what you want. For chat
 completion functionality, it is as simple as:
 
 ```
@@ -265,8 +265,8 @@ interface Assistant {
 }
 ```
 
-You create a client that can talk to an OPenAI provider and instantiate
-an assistant (with tools if you want):
+Then, You create a client that can talk to an OpenAI provider and  
+instantiate an assistant (with tools if you want):
 
 ```
     var client = OpenAiChatModel.builder()
@@ -282,9 +282,9 @@ an assistant (with tools if you want):
         .build();
 ```
 
-That's all. Now to have the assistant perform chat completions including
-function calls you just call the assistant's
-chat() method with your prompt.
+That's all. Now, to have the assistant perform chat completions 
+including function calls, you just call the assistant's
+`chat()` method with your prompt.
 
 ```
   @Override
