@@ -300,7 +300,7 @@ to access Anyscale with no problems whatsoever. When I checked it out I was plea
 see that the code is super-clean and elegant.
 
 I am perplexed as to why such a high-quality library is not more visible. I hope to help with this
-blog post. I discussed it with the[Sashir Estela](https://github.com/sashirestela) - the author -
+blog post. I discussed it with [Sashir Estela](https://github.com/sashirestela) - the author -
 who is very motivated, responsive and interested in promoting open-simpleai and making it available
 to more engineers.
 
