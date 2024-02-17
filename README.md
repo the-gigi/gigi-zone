@@ -6,7 +6,7 @@ by [Hugo](https://gohugo.io/) using the [Ananke](https://themes.gohugo.io/themes
 ## Usage
 
 - Add posts to content/posts/<year>/<month>
-- Test locally with `hugo server`
+- Test locally with `hugo serve`
 - Commit and push at will in 'draft' mode
 - when you're ready to publish remove the `draft = true` from the front matter
 
