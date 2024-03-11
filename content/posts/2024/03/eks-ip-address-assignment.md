@@ -11,7 +11,7 @@ cluster has run out of IP addresses 😱. To be continued...
 Kubernetes is this thing that orchestrates containerized workloads that run on a bunch of nodes.
 Yes, I'm  aware that [it does a few other things too](https://www.amazon.com/Kubernetes-operate-world-class-container-native-systems/dp/1804611395).
 
-So, we have this hierarchy where each Kubernetes clusters has multiple nodes, each node has
+So, we have this hierarchy where each Kubernetes cluster has multiple nodes, each node has
 multiple pods (in theory a node may be empty, but in practice there are always daemonsets) and each
 pod has one or more containers.
 
@@ -176,8 +176,9 @@ That's not a lot. What can be done? Lots of stuff! let's go through the list:
 There are a lot of interesting conversations about these options, their pros and cons and when it's
 appropriate to use each one. But, this post is long enough as is.
 
-Check out this link if you want to explore further the gnarly details of the AWS CNI plugin and its
-IP address management subtleties:
+Check out these links if you want to explore further the gnarly details of the AWS CNI plugin, its
+IP address management subtleties and various IP address optimization strategies:
 https://aws.github.io/aws-eks-best-practices/networking/vpc-cni/
+https://aws.github.io/aws-eks-best-practices/networking/ip-optimization-strategies/
 
 Until next time...
