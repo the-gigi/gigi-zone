@@ -1,15 +1,15 @@
 +++
 title = 'EKS IP Address Assignment'
 date = 2024-03-10T20:12:31-07:00
-draft = true
 +++
 
 It was a dark night. The wind was howling outside. Suddenly, I got a Slack message that our EKS
 cluster has run out of IP addresses 😱. To be continued...
 
+<!--more-->
+
 Kubernetes is this thing that orchestrates containerized workloads that run on a bunch of nodes.
-Yes, I'm
-aware [it does a few other things too](https://www.amazon.com/Kubernetes-operate-world-class-container-native-systems/dp/1804611395).
+Yes, I'm  aware that [it does a few other things too](https://www.amazon.com/Kubernetes-operate-world-class-container-native-systems/dp/1804611395).
 
 So, we have this hierarchy where each Kubernetes clusters has multiple nodes, each node has
 multiple pods (in theory a node may be empty, but in practice there are always daemonsets) and each
@@ -170,14 +170,14 @@ That's not a lot. What can be done? Lots of stuff! let's go through the list:
    addresses per subnet)
 2. Use smaller nodes - nodes where the number of IP addresses per ENI is small will not waste so
    many IP addresses in the warm ENI
-3. Configure the AWS CNI daemonset to pre-allocate less the full capacity of the warm ENI
+3. Configure the AWS CNI daemonset to pre-allocate less than the full capacity of the warm ENI
 4. Switch to IPv6
 
 There are a lot of interesting conversations about these options, their pros and cons and when it's
-appropriate to use each one. but, this post is long enough as is.
+appropriate to use each one. But, this post is long enough as is.
 
-I'll leave you here with this link if you want to explore further the gnarly details of the
-AWS CNI plugin and its IP address management subtleties:
+Check out this link if you want to explore further the gnarly details of the AWS CNI plugin and its
+IP address management subtleties:
 https://aws.github.io/aws-eks-best-practices/networking/vpc-cni/
 
 Until next time...
