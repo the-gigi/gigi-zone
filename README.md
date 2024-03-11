@@ -7,8 +7,13 @@ by [Hugo](https://gohugo.io/) using the [Ananke](https://themes.gohugo.io/themes
 
 - Add posts to content/posts/<year>/<month>
 - Test locally with `hugo serve`
-- Commit and push at will in 'draft' mode
+- Git add, commit and push at will in 'draft' mode
 - when you're ready to publish remove the `draft = true` from the front matter
+
+To add a new post type (change the year, month and post filename as appropriate):
+```
+hugo new content content/posts/2024/03/eks-ip-address-assignment.md
+```
 
 ## Bootstrap
 
