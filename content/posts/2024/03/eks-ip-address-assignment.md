@@ -178,7 +178,7 @@ appropriate to use each one. But, this post is long enough as is.
 
 Check out these links if you want to explore further the gnarly details of the AWS CNI plugin, its
 IP address management subtleties and various IP address optimization strategies:
-https://aws.github.io/aws-eks-best-practices/networking/vpc-cni/
-https://aws.github.io/aws-eks-best-practices/networking/ip-optimization-strategies/
+- https://aws.github.io/aws-eks-best-practices/networking/vpc-cni/
+- https://aws.github.io/aws-eks-best-practices/networking/ip-optimization-strategies/
 
 Until next time...
