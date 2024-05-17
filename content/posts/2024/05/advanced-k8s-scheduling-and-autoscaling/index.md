@@ -216,18 +216,19 @@ spike of activity you will keep paying 💸 for lots of empty nodes.
 I recently ran into a couple of issues on EKS. Everything was fine when we used one shared node
 group for all our workloads. Everyone was like one big happy family 👪 sharing all the nodes.
 
-At some point, we added a couple of new node groups with special labels and taints and assigned
-corresponding tolerations and node affinity to some of our workloads. As long as there nodes in the
-node group the correct pods were scheduled there just fine. However, when we needed a new node the
-cluster-autoscaler just sat there twiddling its virtual thumbs.
+At some point, we added a couple of new node groups with special labels and taints. Then, we
+assigned the corresponding tolerations and node affinity to some of our workloads. As long as there
+were enough nodes in the node group the correct pods were scheduled there just fine. However, when
+we needed a new node the cluster-autoscaler just sat there twiddling its virtual thumbs 👍👎 .
 
 When the cluster autoscaler on AWS notices a pending pod it starts looking for candidate noe groups
 to scale up, except it doesn't!!!!
 It turns out that it is actually looking at ASG tags to scale up. In order for poor pending pod to
-get a
-new node some ASG need to have tags that mave its node anti-affinity. You would expect that EKS as
-part of its implementation on top of EC2 ASGs will take care of this little task and keep ASG tags
+get a new node some ASG needs to have tags that match its node anti-affinity. You would expect that
+EKS as part of its implementation on top of EC2 ASGs will take care of this little task and keep ASG tags
 in sync with node group labels. Well, it doesn't.
+
+![](node-group-asg.png)
 
 There is a long time (5 years!) open
 issue [\[EKS\] \[request\]: Nodegroup should support tagging ASGs](https://github.com/aws/containers-roadmap/issues/608)
