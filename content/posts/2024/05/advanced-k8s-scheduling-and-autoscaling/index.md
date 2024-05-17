@@ -166,7 +166,8 @@ failures too!
 
 Yes, but...
 
-What if the entire availability zone is having problems? This is rare, but happens from time to time.
+What if the entire availability zone is having problems? This is rare, but happens from time to
+time.
 The best practice is to have your deployment pods run in multiple availability zones, so even if one
 zone is down the pods in the other availability zones can handle business until the issues are
 resolved.
@@ -230,10 +231,9 @@ in sync with node group labels. Well, it doesn't.
 
 There is a long time (5 years!) open
 issue [\[EKS\] \[request\]: Nodegroup should support tagging ASGs](https://github.com/aws/containers-roadmap/issues/608)
-that didn't get any response from the EKS team.cbkrrnkiulbldcflhvncuvdhfkljkvihljtflkvr
-
-So, the solution there is to explicitly create ASG tags corresponding your node group tags. This is
-annoying, but if you practice IaC as you should it's a one time thing.
+that didn't get any response from the EKS team. The workaround here is to explicitly create ASG tags
+corresponding your node group tags. This is annoying, but if you practice IaC (Infrastructure as
+Code) it's a one time thing.
 
 Both terraform and Pulumi have dedicated resources especially to handle this use case. See:
 
@@ -259,7 +259,7 @@ Kubernetes. We can do anything! Let's explore some options to accomplish our goa
 - Autoscale as needed (provision nodes when pods are pending, delete nodes that are empty)
 - Spread the pods evenly across all AZs
 
-### Hack #1 - Quick Fix - Custom update strategy 🔄 
+### Hack #1 - Quick Fix - Custom update strategy 🔄
 
 The basic idea is to delete an old pod before creating a new pod and the replace all the old pods
 one by one, without requiring to provision a new node. You can do this with the following update
