@@ -3,7 +3,7 @@ title = 'Advanced Kubernetes Scheduling and Autoscaling'
 date = 2024-05-16T17:45:11-07:00
 +++
 
-What do you know about the intricate web 🕸️ of interactions between advanced Kubernetes scheduling
+What do you know about the intricate web 🕷️ of interactions between advanced Kubernetes scheduling
 techniques and the cluster autoscaler? Probably not enough... read on to get a taste of some gnarly
 nuances and how to deal with them.
 
@@ -359,7 +359,7 @@ Cons:
 - Introduce another puzzle piece
 - may be too “magic”
 
-### Hack #6 - Fragate ☁️
+### Hack #6 - Fargate ⚙️
 
 [Fargate](https://docs.aws.amazon.com/eks/latest/userguide/fargate.html) removes the need to manage
 node groups and nodes.
