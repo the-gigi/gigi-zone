@@ -24,7 +24,7 @@ resources to accommodate the new pod:
 
 ![](simple-schedule.png)
 
-Now, the scheduler can't just assign the node into any old node. There a bunch of factors it takes
+Now, the scheduler can't just assign the node into any old node. There are a bunch of factors it takes
 into account: resource requests (cpu, memory, ephemeral storage), node affinity and anti-affinity,
 pod affinity and anti-affinity, taints, tolerations, etc.
 
