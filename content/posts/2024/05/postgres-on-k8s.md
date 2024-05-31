@@ -89,27 +89,27 @@ spec:
         app: postgres
     spec:
       containers:
-      - name: postgres
-        image: postgres:latest
-        env:
-        - name: POSTGRES_DB
-          value: mydatabase
-        - name: POSTGRES_USER
-          value: myuser
-        - name: POSTGRES_PASSWORD
-          valueFrom:
-            secretKeyRef:
-              name: postgres-secret
-              key: POSTGRES_PASSWORD
-        ports:
-        - containerPort: 5432
-        volumeMounts:
-        - mountPath: /var/lib/postgresql/data
-          name: pgdata
+        - name: postgres
+          image: postgres:latest
+          env:
+            - name: POSTGRES_DB
+              value: mydatabase
+            - name: POSTGRES_USER
+              value: myuser
+            - name: POSTGRES_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: postgres-secret
+                  key: POSTGRES_PASSWORD
+          ports:
+            - containerPort: 5432
+          volumeMounts:
+            - mountPath: /var/lib/postgresql/data
+              name: pgdata
       volumes:
-      - name: pgdata
-        persistentVolumeClaim:
-          claimName: pg-pvc
+        - name: pgdata
+          persistentVolumeClaim:
+            claimName: pg-pvc
 ---
 apiVersion: v1
 kind: Service
@@ -117,10 +117,10 @@ metadata:
   name: postgres
 spec:
   ports:
-  - port: 5432
+    - port: 5432
   selector:
     app: postgres
-' | k apply -f -  
+  ' | k apply -f -  
 ```
 
 If you're unfamiliar with any of the above, just get the
@@ -137,25 +137,25 @@ metadata:
   name: query-pod
 spec:
   containers:
-  - name: query-container
-    image: postgres:latest
-    command: ["/bin/sh", "-c"]
-    args:
-      - |
-        while true; do
-          PGPASSWORD=$POSTGRES_PASSWORD psql -h postgres.default.svc.cluster.local \
-           -U the-user -d the-database \
-           -c "SELECT now();"
-          sleep 30;
-        done
-    env:
-    - name: POSTGRES_PASSWORD
-      valueFrom:
-        secretKeyRef:
-          name: postgres-secret
-          key: POSTGRES_PASSWORD
+    - name: query-container
+      image: postgres:latest
+      command: [ "/bin/sh", "-c" ]
+      args:
+        - |
+          while true; do
+            PGPASSWORD=$POSTGRES_PASSWORD psql -h postgres.default.svc.cluster.local \
+             -U the-user -d the-database \
+             -c "SELECT now();"
+            sleep 30;
+          done
+      env:
+        - name: POSTGRES_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: postgres-secret
+              key: POSTGRES_PASSWORD
   restartPolicy: OnFailure
-' | k apply -f -  
+  ' | k apply -f -  
 ```
 
 ## Check the Logs 📜
@@ -276,16 +276,16 @@ metadata:
   name: pgctl
 spec:
   containers:
-  - name: pgctl
-    image: postgres
-    stdin: true
-    tty: true
-    command: ["/bin/bash"]
-    args:
-    - "-c"
-    - "PGPASSWORD=the-password exec psql -h postgres.default.svc.cluster.local -U invisible -d invisible"
+    - name: pgctl
+      image: postgres
+      stdin: true
+      tty: true
+      command: [ "/bin/bash" ]
+      args:
+        - "-c"
+        - "PGPASSWORD=the-password exec psql -h postgres.default.svc.cluster.local -U invisible -d invisible"
   restartPolicy: Never
-' | k apply -f -
+  ' | k apply -f -
 ```
 
 Then, we still need to exec to it.
@@ -297,39 +297,39 @@ Instead, we need to use `k run` with some fancy overrides:
 ```yaml
 ❯ kubectl run --rm --image=postgres -it pgctl --overrides='
   {
-    "apiVersion": "v1",
-    "spec": {
-      "containers": [
+"apiVersion": "v1",
+"spec": {
+  "containers": [
+    {
+      "name": "pgctl",
+      "image": "postgres",
+      "stdin": true,
+      "tty": true,
+      "env": [
         {
-          "name": "pgctl",
-          "image": "postgres",
-          "stdin": true,
-          "tty": true,
-          "env": [
-            {
-              "name": "PGHOST",
-              "value": "postgres.default.svc.cluster.local"
-            },
-            {
-              "name": "PGPASSWORD",
-              "value": "the-password"
-            }
-          ],
-          "command": ["/bin/bash"],
-          "args": [
-            "-c",
-            "exec psql -U the-user -d the-database"
-          ]
+          "name": "PGHOST",
+          "value": "postgres.default.svc.cluster.local"
+        },
+        {
+          "name": "PGPASSWORD",
+          "value": "the-password"
         }
+      ],
+      "command": [ "/bin/bash" ],
+      "args": [
+        "-c",
+        "exec psql -U the-user -d the-database"
       ]
     }
-  }'
+  ]
+}
+}'
 
-the-database=# select now();
-              now
--------------------------------
- 2024-05-31 02:52:37.186006+00
-(1 row)
+  the-database=# select now();
+  now
+  -------------------------------
+  2024-05-31 02:52:37.186006+00
+  (1 row)
 ```
 
 Amazing. That gets us pretty far, but there are two problems. First, we need to know the password (
@@ -350,54 +350,54 @@ and extract the password at runtime.
 
 ```yaml
 ❯ kubectl run --rm --image=postgres -it pgctl --overrides='
-{
-  "apiVersion": "v1",
-  "spec": {
-    "containers": [
-      {
-        "name": "pgctl",
-        "image": "postgres",
-        "stdin": true,
-        "tty": true,
-        "env": [
-          {
-            "name": "PGHOST",
-            "value": "postgres.default.svc.cluster.local"
-          },
-          {
-            "name": "PGPASSWORD_FILE",
-            "value": "/etc/secrets/POSTGRES_PASSWORD"
-          }
-        ],
-        "command": ["/bin/bash"],
-        "args": [
-          "-c",
-          "PGPASSWORD=$(cat $PGPASSWORD_FILE) exec psql -h $PGHOST -U the-user -d the-database"
-        ],
-        "volumeMounts": [
-          {
-            "name": "secret-volume",
-            "mountPath": "/etc/secrets"
-          }
-        ]
-      }
-    ],
-    "volumes": [
-      {
-        "name": "secret-volume",
-        "secret": {
-          "secretName": "postgres-secret"
+  {
+    "apiVersion": "v1",
+    "spec": {
+      "containers": [
+        {
+          "name": "pgctl",
+          "image": "postgres",
+          "stdin": true,
+          "tty": true,
+          "env": [
+            {
+              "name": "PGHOST",
+              "value": "postgres.default.svc.cluster.local"
+            },
+            {
+              "name": "PGPASSWORD_FILE",
+              "value": "/etc/secrets/POSTGRES_PASSWORD"
+            }
+          ],
+          "command": [ "/bin/bash" ],
+          "args": [
+            "-c",
+            "PGPASSWORD=$(cat $PGPASSWORD_FILE) exec psql -h $PGHOST -U the-user -d the-database"
+          ],
+          "volumeMounts": [
+            {
+              "name": "secret-volume",
+              "mountPath": "/etc/secrets"
+            }
+          ]
         }
-      }
-    ]
-  }
-}'
+      ],
+      "volumes": [
+        {
+          "name": "secret-volume",
+          "secret": {
+            "secretName": "postgres-secret"
+          }
+        }
+      ]
+    }
+  }'
 
-the-database=# select now();
-              now
--------------------------------
- 2024-05-31 03:09:03.556052+00
-(1 row)
+  the-database=# select now();
+  now
+  -------------------------------
+  2024-05-31 03:09:03.556052+00
+  (1 row)
 ```
 
 What does it do exactly? This command creates a temporary pod to interactively connect to a
@@ -419,11 +419,11 @@ function connect_db() {
   local PGDATABASE=${3:-$PGDATABASE}
   local PGSECRET=${4:-$PGSECRET}
   local PGPOD=${5:-pgctl}
-  
+
 
   if [ -z "$PGSECRET" ]; then
-    echo "Error: PGSECRET is not set."
-    return 1
+echo "Error: PGSECRET is not set."
+  return 1
   fi
 
   kubectl run --rm --image=postgres -it $PGPOD --overrides='
@@ -446,7 +446,7 @@ function connect_db() {
               "value": "/etc/secrets/POSTGRES_PASSWORD"
             }
           ],
-          "command": ["/bin/bash"],
+          "command": [ "/bin/bash" ],
           "args": [
             "-c",
             "PGPASSWORD=$(cat $PGPASSWORD_FILE) exec psql -h $PGHOST -U '"$PGUSER"' -d '"$PGDATABASE"'"
@@ -472,7 +472,7 @@ function connect_db() {
 }
 ```
 
-Add this function to your profile and you can connect easily using  
+Add this function to your profile and you can connect easily using
 
 ```shell
 ❯ connect_db postgres.default.svc.cluster.local the-user the-database postgres-secret
@@ -495,5 +495,12 @@ the-database=# select now();
  2024-05-31 07:03:12.829764+00
 (1 row)
 ```
- 
-The end!
+
+## Final Words 💎
+
+One last thing before you go. Everything we covered here works for managed Postgres as well (AWS
+RDS, Google Cloud SQL, Azure Database for Postgres).
+
+Give it a try and have fun!
+
+
