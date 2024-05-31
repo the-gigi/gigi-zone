@@ -73,7 +73,6 @@ spec:
     requests:
       storage: 10Gi
 ---
-# postgres-deployment.yaml
 apiVersion: apps/v1
 kind: Deployment
 metadata:
