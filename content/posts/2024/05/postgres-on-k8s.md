@@ -92,9 +92,9 @@ spec:
           image: postgres:latest
           env:
             - name: POSTGRES_DB
-              value: mydatabase
+              value: the-database
             - name: POSTGRES_USER
-              value: myuser
+              value: the-user
             - name: POSTGRES_PASSWORD
               valueFrom:
                 secretKeyRef:
