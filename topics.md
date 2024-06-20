@@ -26,6 +26,17 @@ software engineers toiling over their keyboards.
 
 When config files shine.
 
+## Attack of the Clones
+
+From the "Make the world a better place" department... introducing Cyclone
+
+https://github.com/the-gigi/cyclone
+
+## Dockerize the World
+
+https://github.com/the-gigi/docker-images
+
+
 ## Automating away AWS SSO Login
 
 https://github.com/the-gigi/auto-aws-sso-login
