@@ -1,8 +1,5 @@
 # Blog post topics
 
-
-## Pwning Kubernetes
-
 ## Fixing the OpenAI Function Calling API
 
 https://github.com/openai/openai-openapi/issues/259

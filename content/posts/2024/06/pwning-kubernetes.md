@@ -547,8 +547,7 @@ for more info.
 
 ### Take Home Points 🏠
 
-Kubernetes by default lets anyone who can create pods to create pods that can easily take over the
-entire cluster.
+By default, Kubernetes allows anyone who can create pods to potentially take over the entire cluster.
 
 First, be very mindful about who can create pods on your cluster.
 
