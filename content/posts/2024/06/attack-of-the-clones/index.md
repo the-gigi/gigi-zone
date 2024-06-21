@@ -13,9 +13,17 @@ become a reality! Enter Cyclone🌀- a little Rust program I built to make the w
 
 ![](attack-of-the-clones.jpg)
 
-I know, it sounds too good to be true, but trust me, it is possible. According to ChatGPT millions
-of repositories are cloned every day on GitHub, and typing "git clone " takes 2-3 seconds on
-average.
+# But, Why? 🤷
+
+To clone a repository from Github or Gitlab you do the following:
+
+1. Copy the repository's URL to your clipboard
+2. Go to your console
+3. Type "git clone "
+4. Paste the URL from your clipboard
+
+According to ChatGPT millions of repositories are cloned every day on GitHub, and typing "git clone " 
+takes 2-3 seconds on average.
 
 This means if somehow typing "git clone " could be avoided then we as an industry
 could save millions of seconds every single day!
@@ -29,9 +37,10 @@ you never need to type it!
 
 Namaste 🙏
 
-# Usage
+# Cool. Sign me up! 😎 
 
 Cyclone🌀 is available here:
+https://github.com/the-gigi/cyclone
 
 You can just build and run Cyclone yourself on any operating system:
 
@@ -40,7 +49,7 @@ $ cargo b -r
 $ ./target/release/cyclone
 ```
 
-## The macOS White-Glove Service
+## The macOS White-Glove Service 🤵
 
 If you want the white-glove service on macOS you should run Cyclone🌀 automatically whenever you
 start your computer, so it's always there ready to shave those seconds from your git clones...
