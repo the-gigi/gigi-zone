@@ -5,7 +5,7 @@ date = 2024-06-20T07:45:11-07:00
 
 Imagine that nobody has to type `git clone` ever again! Can you even begin to comprehend what a
 gigantic improvement in the quality of life of every developer it would be? This pipe dream has just
-become a reality! Enter Cyclone🌀- a little Rust program I built to make the world 🌍 a better place.
+become a reality! Enter Cyclone🌀 - a little Rust program I built to make the world 🌍 a better place.
 
 **WARNING: This is a Kubernetes-free Post**
 
@@ -19,10 +19,11 @@ To clone a repository from Github or Gitlab you do the following:
 
 1. Copy the repository's URL to your clipboard
 2. Go to your console
-3. Type "git clone "
+3. Type "git clone"
 4. Paste the URL from your clipboard
 
-According to ChatGPT millions of repositories are cloned every day on GitHub, and typing "git clone " 
+According to ChatGPT millions of repositories are cloned every day on GitHub, and typing "git
+clone "
 takes 2-3 seconds on average.
 
 This means if somehow typing "git clone " could be avoided then we as an industry
@@ -37,7 +38,7 @@ you never need to type it!
 
 Namaste 🙏
 
-# Cool. Sign me up! 😎 
+# Cool. Sign me up! 😎
 
 Cyclone🌀 is available here:
 https://github.com/the-gigi/cyclone
