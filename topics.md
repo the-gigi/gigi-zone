@@ -1,10 +1,17 @@
 # Blog post topics
 
-## Fixing the OpenAI Function Calling API
+## Fixing the OpenAI Tool Calling API
 
 https://github.com/openai/openai-openapi/issues/259
 
 https://github.com/sashirestela/simple-openai/issues/132
+
+The API:
+https://platform.openai.com/docs/api-reference/chat/create
+
+https://platform.openai.com/docs/api-reference/runs/createRun
+
+
 
 ## Configuration Files Considered Harmful (Sort of)
 
@@ -23,11 +30,16 @@ software engineers toiling over their keyboards.
 
 When config files shine.
 
-## Attack of the Clones
 
-From the "Make the world a better place" department... introducing Cyclone
 
-https://github.com/the-gigi/cyclone
+## Mastering Docker
+
+- Small images
+- Minimal layers
+- CMD and/or ENTRYPOINT
+- shell vs. exec
+
+https://www.docker.com/blog/docker-best-practices-choosing-between-run-cmd-and-entrypoint
 
 ## Dockerize the World
 
@@ -55,3 +67,28 @@ https://github.com/the-gigi/dotfiles/blob/master/rcfiles/.p10k.zsh
 - gcloud
 - az
 - psql
+
+## How kube-forward works
+
+## Postgres on k8s - part 2
+
+- Using socat
+
+## Fuzz-Emoji - Polyglot Fun
+
+- Python
+- Golang
+- Rust
+
+## Free as in Tier
+
+Fuzz-emoji in the cloud
+
+- AWS Lambda
+- Google Cloud Functions
+- Azure Functions
+
+## Knative functions
+
+Fuzz-emoji in Kubernetes
+
