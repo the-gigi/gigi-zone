@@ -1,5 +1,5 @@
 +++
-title = 'Fixing the Open AI Tool Calling API'
+title = 'Fixing the OpenAI Tool Calling API'
 date = 2024-08-04T12:51:52-07:00
 +++
 
