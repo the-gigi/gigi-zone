@@ -18,7 +18,7 @@ to the original prompt.
 
 For example, consider an AI system designed to provide its users with travel information ✈️. A user
 may ask a question like: "I want to fly from Rome to Rio tomorrow afternoon, but I don't want to
-change plains more than once, also pay no more than $400. can I haz it?" 🍹☀️
+change planes more than once, also pay no more than $400. can I haz it?" 🍹☀️
 
 LLMs being pre-trained models without access to an up-to-date flight information are unable to
 provide a useful response. But, we (AKA the AI system developers) can help the model by augmenting
@@ -33,7 +33,7 @@ and, it can utilize this convenient tool.
 
 How does it work then? The model returns a response to the original query that includes
 a `tool_calls` array that contains the tool name `get_flight_info`, the date of tomorrow, "Rome"
-and "Rio". Then, the system is responsible for collecting the information by calling airline APIS or
+and "Rio". Then, the system is responsible for collecting the information by calling airline APIs or
 maybe using some cached information. The system sends the data to the LLM, which can now scan the
 info and find the flights that match the user requirements and generate the final response.
 

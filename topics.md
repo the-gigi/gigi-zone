@@ -1,17 +1,5 @@
 # Blog post topics
 
-## Fixing the OpenAI Tool Calling API
-
-https://github.com/openai/openai-openapi/issues/259
-
-https://github.com/sashirestela/simple-openai/issues/132
-
-The API:
-https://platform.openai.com/docs/api-reference/chat/create
-
-https://platform.openai.com/docs/api-reference/runs/createRun
-
-
 
 ## Configuration Files Considered Harmful (Sort of)
 
@@ -29,8 +17,6 @@ software engineers toiling over their keyboards.
 - Dishonorable mention - JSON as config
 
 When config files shine.
-
-
 
 ## Mastering Docker
 
