@@ -55,7 +55,7 @@ Here is an example of tool definition in Python that corresponds to our `get_fli
             "function": {
                 "name": "get_flightinfo",
                 "description": """Get the airline, flight number, departure and arrival times
-                                  private and connections",
+                                  price and connections",
                 "parameters": {
                     "type": "object",
                     "properties": {
