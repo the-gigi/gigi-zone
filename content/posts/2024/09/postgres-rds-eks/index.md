@@ -40,9 +40,9 @@ Here is the plan 🧠:
 - Fetch the username and password
 - Connect to the DB using your favorite visual DB tool with the Postgres credentials
 
-## Fetch the IP address of the RDS instance or proxy
+## Fetch the endpoint of the RDS instance or proxy
 
-We will use the AWS CLI to fetch the IP address of the RDS instance or proxy and also jq for minor
+We will use the AWS CLI to fetch the endpoint of the RDS instance or RDS proxy and also `jq` for minor
 formatting. If you are command-line challenged you are in the wrong place, buddy 🤷.
 
 You need to have the AWS CLI installed and configured with the appropriate profile that has
