@@ -32,9 +32,9 @@ https://www.docker.com/blog/docker-best-practices-choosing-between-run-cmd-and-e
 https://github.com/the-gigi/docker-images
 
 
-## Automating away AWS SSO Login
+## Automating away Web Logins
 
-https://github.com/the-gigi/auto-aws-sso-login
+https://github.com/the-gigi/auto-web-login
 
 ## OpenAI JavaClient library
 
@@ -55,10 +55,6 @@ https://github.com/the-gigi/dotfiles/blob/master/rcfiles/.p10k.zsh
 - psql
 
 ## How kube-forward works
-
-## Postgres on k8s - part 2
-
-- Using socat
 
 ## Fuzz-Emoji - Polyglot Fun
 

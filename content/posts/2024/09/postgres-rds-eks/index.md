@@ -16,7 +16,7 @@ Keep reading to find out...
 
 # Prior Art 🎨
 
-A few months ago I published a blog post on accessing a Postgres DB deployed on directly on your k8s
+A few months ago I published a blog post on accessing a Postgres DB deployed directly on your k8s
 cluster - [Postgres on K8S](https://the-gigi.github.io/gigi-zone/posts/2024/05/postgres-on-k8s/).
 
 The major difficulty is that the Postgres DB is not directly accessible from the internet. The basic
