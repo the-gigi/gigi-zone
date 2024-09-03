@@ -109,7 +109,7 @@ discuss it in the context of security.
 # Security 🛡️
 
 OK. Connecting to a private RDS instance from your laptop is not the most secure thing to do. The
-first rule of accessing your postgres DB directly is: **Don't do it!**. 🚫
+first rule of accessing your postgres DB directly is: **Don't do it!** 🚫
 
 Alright, you are still here, so let's discuss how to do it with some semblance of securely awareness
 at least. First, make sure you are in a somewhat secure environment. If you are in a coffee shop or
@@ -118,9 +118,13 @@ some other public place using public networks, you are already in trouble.
 Next, let's consider how to minimize the risk. Here are a few ideas:
 
 - Run the proxy pod in a dedicated namespace to isolate DB access from other workloads
-- Use a dedicated Postgres user with limited permissions to
-  access the DB
-- Grant the Postgres user access only for the duration of your interactive session and revoke
+- Use a dedicated Postgres user with limited permissions to access the DB.
+- Use a dedicated Kubernetes user with limited permissions to access the proxy pod and fetch the
+  credentials.
+- If the credentials are stored in a Kubernetes secret, keep the secret in the same namespace as the
+  proxy pod.
+- Grant the Postgres user access only for the duration of your interactive session and revoke it
+  immediately after.
 - When you fetch the username and password, do it in a sub-shell and copy directly to the clipboard.
 
 # Web-based Postgres Access 🕸️
