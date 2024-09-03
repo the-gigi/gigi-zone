@@ -117,7 +117,8 @@ some other public place using public networks, you are already in trouble.
 
 Next, let's consider how to minimize the risk. Here are a few ideas:
 
-- Use a dedicated Postgres user with limited permissions (ideally just read-only permissions) to
+- Run the proxy pod in a dedicated namespace to isolate DB access from other workloads
+- Use a dedicated Postgres user with limited permissions to
   access the DB
 - Grant the Postgres user access only for the duration of your interactive session and revoke
 - When you fetch the username and password, do it in a sub-shell and copy directly to the clipboard.
