@@ -36,6 +36,13 @@ https://github.com/the-gigi/docker-images
 
 https://github.com/the-gigi/auto-web-login
 
+
+## AppleScript vs. JXA
+
+
+
+
+
 ## OpenAI JavaClient library
 
 https://github.com/the-gigi/llm-playground-java/
