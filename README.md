@@ -1,11 +1,13 @@
 # The Gigi Zone
 
 This repo hosts the [Gigi Zone](https://the-gigi.github.io/gigi-zone/) blog. It is generated
-by [Hugo](https://gohugo.io/) using the [Ananke](https://themes.gohugo.io/themes/gohugo-theme-ananke/) theme.
+by [Hugo](https://gohugo.io/) using
+the [Ananke](https://themes.gohugo.io/themes/gohugo-theme-ananke/) theme.
 
 ## Usage
 
 To add a new post type (change the year, month and post filename as appropriate):
+
 ```
 hugo new content content/posts/2024/03/eks-ip-address-assignment.md
 ```
@@ -24,10 +26,5 @@ https://gohugo.io/getting-started/quick-start/
 
 ### Hosting on GitHub Pages
 
-THe blog is hosted on GitHub pages. Check out https://gohugo.
-io/hosting-and-deployment/hosting-on-github/ 
-
-
-
-
-
+THe blog is hosted on GitHub pages.
+Check out https://gohugo.io/hosting-and-deployment/hosting-on-github/ 

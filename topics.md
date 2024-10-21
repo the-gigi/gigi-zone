@@ -1,6 +1,8 @@
 # Blog post topics
 
 
+## Kubernetes Resource Fine-tuning and Bin packing 
+
 ## Configuration Files Considered Harmful (Sort of)
 
 There is nothing like a good "<Blank> is considered Harmful" essay to exasperate the unwashed masses of anguished
@@ -32,15 +34,11 @@ https://www.docker.com/blog/docker-best-practices-choosing-between-run-cmd-and-e
 https://github.com/the-gigi/docker-images
 
 
-## Automating away Web Logins
 
-https://github.com/the-gigi/auto-web-login
+## Datadog LLM Observability, OpenTelemetry and Async tracing
 
 
 ## AppleScript vs. JXA
-
-
-
 
 
 ## OpenAI JavaClient library
