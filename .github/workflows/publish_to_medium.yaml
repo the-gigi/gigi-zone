@@ -7,7 +7,7 @@ jobs:
   publish-to-medium:
     runs-on: ubuntu-latest
     env:
-      POST_DIR: "content/posts"
+      POST_DIR: "content/posts/2024/04/mastering-spot-instances-on-k8s-for-fun-and-profit"
       ACCESS_TOKEN: ${{ secrets.MEDIUM_ACCESS_TOKEN }}
     steps:
       - name: Checkout Code
@@ -21,4 +21,4 @@ jobs:
           replaceHyperlinkToLink: false
           frontmatterFormat: "yaml"
           draft: true
-          canonicalRootUrl: "https://github.com/the-gigi/gigi-zone/tree/main/content/posts"
+          canonicalRootUrl: "https://github.com/the-gigi/gigi-zone/tree/main/content/posts/2024/04/mastering-spot-instances-on-k8s-for-fun-and-profit"
