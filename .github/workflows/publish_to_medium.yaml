@@ -1,0 +1,24 @@
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  publish-to-medium:
+    runs-on: ubuntu-latest
+    env:
+      POST_DIR: "content/posts"
+      ACCESS_TOKEN: ${{ secrets.MEDIUM_ACCESS_TOKEN }}
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Markdown Or Hugo To Medium
+        uses: imrushi/markdown-or-hugo-to-medium@v1.2.2
+        with:
+          markdownOrHugo: "hugo"
+          shortcodes: "./shortcodes.json"
+          replaceHyperlinkToLink: false
+          frontmatterFormat: "yaml"
+          draft: true
+          canonicalRootUrl: "https://github.com/the-gigi/gigi-zone/tree/main/content/posts"

@@ -1,0 +1,21 @@
+[
+    {
+        "name": "code",
+        "replace": "```"
+    },
+    {
+        "name": "image",
+        "replace": "$1",
+        "regex": "{{< image src=\"([^\"]+)\"[^>]*>}}"
+    },
+    {
+        "name": "figure",
+        "replace": "$1",
+        "regex": "{{< figure src=\"([^\"]+)\"[^>]*>}}"
+    },
+    {
+        "name": "gist",
+        "replace": "https://gist.github.com/$1/$2?file=$3",
+        "regex": "{{< gist ([a-zA-Z0-9]+) ([a-zA-Z0-9]+) ?(\\w+.\\w+)>}}"
+    }
+]
