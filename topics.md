@@ -79,3 +79,19 @@ Fuzz-emoji in the cloud
 
 Fuzz-emoji in Kubernetes
 
+## Python f-strings
+
+Explore the recent innovations like comments, str(), repr() and ascii() and async
+https://docs.python.org/3/reference/lexical_analysis.html#f-strings
+
+Compare to other languages
+
+| Language      | Equivalent to Python f-string                                | Syntax Example                                    | Example Output           |
+|---------------|--------------------------------------------------------------|--------------------------------------------------|--------------------------|
+| **C/C++**     | `sprintf` or `std::format` (C++20)                           | `std::format("Hello, {}!", name);`               | `Hello, Gigi!`           |
+| **Java**      | `String.format`                                              | `String.format("Hello, %s!", name);`             | `Hello, Gigi!`           |
+| **JavaScript/TypeScript** | Template literals                                | `` `Hello, ${name}!` ``                          | `Hello, Gigi!`           |
+| **Go**        | `fmt.Sprintf`                                                | `fmt.Sprintf("Hello, %s!", name)`                | `Hello, Gigi!`           |
+| **Rust**      | `format!` macro                                              | `format!("Hello, {}!", name);`                   | `Hello, Gigi!`           |
+| **Ruby**      | String interpolation with `#{}`                              | `"Hello, #{name}!"`                              | `Hello, Gigi!`           |
+| **C#**        | String interpolation with `$`                                | `$"Hello, {name}!"`                              | `Hello, Gigi!`           |

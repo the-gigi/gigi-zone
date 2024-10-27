@@ -155,7 +155,6 @@ and the findButton() function is used to locate the button to click on this part
                 regex: /https:\/\/device\.sso\..*\.amazonaws\.com\/.*/,
                 findButton: () => document.getElementById('cli_verification_btn')
             },
-
             {
                 regex: /https:\/\/d-.*\.awsapps\.com\/start\/.*/,
                 findButton: () => document.getElementById('cli_login_button') ||
