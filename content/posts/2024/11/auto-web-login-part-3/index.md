@@ -29,7 +29,7 @@ one annoying loose end we need to take care of.
 
 Let's add apples 🍎 to the mix.
 
-## 🚪 Closing Tabs with Applescript 🚪
+## 🚪 Closing Tabs with AppleScript 🚪
 
 When the SSO workflow is complete, it leaves behind a browser tab like so:
 
@@ -47,7 +47,7 @@ it's a bit of a bummer for us. 😕
 https://github.com/the-gigi/auto-web-login/blob/main/CloseTabs.applescript
 
 Alright, let’s break down this AppleScript dive into what’s going on in each
-section. If you unfamiliar with Applescript and it looks weird, don't worry. It is weird! Here’s the
+section. If you unfamiliar with AppleScript and it looks weird, don't worry. It is weird! Here’s the
 lowdown:
 
 ### ⚙️ Setting Up the URL and JavaScript Query Pairs ⚙️
@@ -87,7 +87,7 @@ tell application "Google Chrome"
 
 Next, we iterate over the URL and JavaScript query pairs we defined earlier. For each pair, we check
 if the URL of the active tab matches the URL pattern. If it does, we execute the JavaScript query in
-the tab. The syntax is a bit wonky, but you have been forewarned! We have here Applescript
+the tab. The syntax is a bit wonky, but you have been forewarned! We have here AppleScript
 automating the browser and executing a Javascript query in the context of the active tab.
 
 ```applescript
@@ -175,7 +175,7 @@ From now on, it will run whenever the computer and close the browser tabs for us
 
 TamperMonkey can manipulate the DOM of a web page, but it can't close tabs. For that, we need to use
 a different tool like AppleScript. But, to effectively close the correct tab, we still need to
-execute Javascript dynamically on the active tab from within the Applescript.
+execute Javascript dynamically on the active tab from within the AppleScript.
 
 That was fun. We had monkeys 🐒 , snakes 🐍, and apples 🍎. We automated the entire SSO workflow. We
 can now sit back and relax 🍹 while all our web login needs are taken care of by the automation  Or
