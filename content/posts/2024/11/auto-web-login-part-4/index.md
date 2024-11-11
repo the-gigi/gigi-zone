@@ -76,7 +76,7 @@ Here is the directory structure:
     └── main.rs
 ```
 
-The Cargo.toml file is the project file, which contains somme metadata and the dependencies
+The Cargo.toml file is the project file, which contains some metadata and the dependencies
 
 ```toml
 [package]
