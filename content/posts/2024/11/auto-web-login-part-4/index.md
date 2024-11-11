@@ -221,10 +221,10 @@ Let's create a simple page with a button on it and figure out how to locate it.
 </head>
 <body>
 <button style="font-size: 32px; 
-                 background-color: green; 
-                 color: white; 
-                 margin: 10px;">
-    Ze Button!
+               background-color: green; 
+               color: white; 
+               margin: 10px;">
+  Ze Button!
 </button>
 </body>
 </html>
