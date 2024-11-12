@@ -133,10 +133,9 @@ Let's break it down piece by piece.
 ## 📦 The Imports 📦
 
 It all starts with a lot of imports. Some of them are from
-Rust's standard library, some are from the `enigo` library that allows us to move the mouse and
-click buttons, and some are from the `serde` library that allows us to read the config file and some
-are from the `enigo` library, which does the heavy lifting of moving the mouse around and clicking
-buttons.
+Rust's standard library, some are from the `serde` library that allows us to read the config file
+and some are from the `enigo` library, which does the heavy lifting of moving the mouse around and
+clicking buttons.
 
 ```rust
 use enigo::{Enigo, Button, Mouse, Settings};
@@ -224,7 +223,7 @@ Let's create a simple page with a button on it and figure out how to locate it.
                background-color: green; 
                color: white; 
                margin: 10px;">
-  Ze Button!
+    Ze Button!
 </button>
 </body>
 </html>
