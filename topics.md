@@ -1,7 +1,10 @@
 # Blog post topics
 
+## Blue-green upgrade of Postgres on AWS RDS + RDS Proxy
 
 ## Kubernetes Resource Fine-tuning and Bin packing 
+
+## Datadog LLM Observability
 
 ## Configuration Files Considered Harmful (Sort of)
 
