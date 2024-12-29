@@ -11,6 +11,9 @@ be serious for a change. 🫡
 
 <!--more-->
 
+![](images/hero.png)
+
+
 ## 🤷‍♂️ Why? 🤷‍♂️
 
 So, databases are, like, really important. They keep your data and all that. The database powers
