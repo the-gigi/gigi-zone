@@ -1,8 +1,10 @@
 # Blog post topics
 
-## Blue-green upgrade of Postgres on AWS RDS + RDS Proxy
 
-## Kubernetes Resource Fine-tuning and Bin packing 
+## Kubernetes Node Group Architecture
+
+
+## Kubernetes Resource Fine-tuning 
 
 ## Datadog LLM Observability
 
