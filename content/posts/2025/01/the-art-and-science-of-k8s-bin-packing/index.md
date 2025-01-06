@@ -360,11 +360,12 @@ volatile, which means 100% resource utilization is often impossible.
 ## Optimizing startup time
 
 Congratulations! You have achieved 100% bin packing and even 100% resource utilization (as unlikely
-as it may be) 🥳! But, now whenever the load increase and the horizontal autoscaler provisions a new
-pod this pod will stay pending until a new node is provisioned. This can take several minutes. For
+as it may be) 🥳! But, now whenever the load increases and the horizontal autoscaler provisions a new
+pod, this pod will remain pending until a new node is provisioned. This can take several minutes.
+For
 many workloads this is unacceptable. If you have some low-priority workloads you can use the Pod
 Priority and Preemption feature to prioritize workloads and ensure that critical workloads are
-scheduled first. But, if you want to be sure you may need to provision some extra nodes jsut to be
+scheduled first. But, if you want to be sure you may need to provision some extra nodes just to be
 ready to handle demand spikes.
 
 ## Cloud Cost Optimizations
@@ -391,22 +392,24 @@ bin packing ratio is going to drop. Since, you naturally anticipate growth it ma
 more resources than you need right now in the hopes that you'll be able to use them in the near
 future with more users and traffic.
 
-[](images/reserved-instances.png)
+![](images/reserved-instances.png)
 
 ## High-availability, reliability and redundancy
 
 For large scale systems high-availability and reliability is a must. Business continuity in the face
 of disasters is more often than not a major requirement. There is exactly one way to handle this -
 **Redundancy**. When any part of your system fails you need to be able to fail over to an
-alternative. This can happen at the pod level, at node level, at the data center level (availability
+alternative. This can happen at the pod level, at the node level, at the data center level (
+availability
 zone), at the region level and at the cloud provider level. Kubernetes with the help of the cloud
 provider and the cluster autoscaler got you covered as far as containers, pods and nodes. But,
-beyond that you need to have extra resources available and the robust disaster recovery plan.
+beyond that you need to have extra resources available and a robust disaster recovery plan.
 
 If you keep hot (pre-provisioned) spare nodes ready to take over the load in case of an availability
 zone failure or regional failure then these nodes will be underutilized most of the time. But, when
-the disaster strikes they will be ready to take over the load. This is a trade-off between bin
-packing efficiency and high-availability.
+the disaster strikes you won't have to scramble and try to provision a bunch of nodes from scratch.
+This is a trade-off between bin packing efficiency and high-availability. It will cost you for sure
+if you go this route 💰.
 
 ![](images/redundancy.png)
 
