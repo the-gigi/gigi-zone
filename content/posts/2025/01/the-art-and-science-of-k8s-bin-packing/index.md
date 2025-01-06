@@ -116,15 +116,16 @@ requested (when limits > requests). But, from a pure bin packing perspective, it
 
 ## But, what about...
 
-I know, I know. The wonderful world of Kubernetes has many wonders. Managed node technologies like:
+I know, I know. The amazing world of Kubernetes has many wonders such as managed node technologies:
 
 - [AWS EKS Automode](https://docs.aws.amazon.com/eks/latest/userguide/automode.html)
 - [GKE Autopilot](https://cloud.google.com/kubernetes-engine/docs/concepts/autopilot-overview)
 - [Azure AKS Virtual Nodes](https://learn.microsoft.com/en-us/azure/aks/virtual-nodes)
 - [Azure AKS Automatic](https://learn.microsoft.com/en-us/azure/aks/learn/quick-kubernetes-automatic-deploy)
 
-These technologies are great, but they come with various limitations and trade-offs. There are many
-reasons why you may full control over node management.
+These technologies are great and if you use them then you don't have to worry about bin packing, but
+they come with various limitations and trade-offs. There are many reasons why you may want full
+control over node management. I will mention many of these scenarios later in the post.
 
 Alright, now that we got that out of the way let's move on to the fun stuff.
 
@@ -173,7 +174,7 @@ For each workload the sum of all requests across all resources should be determi
 owners. Once they figured it out, they can use this information to determine which nodes can host
 their workload.
 
-Kubernetes 1.32 also introduced support (in Alpha) for pod-level resource specification:
+Kubernetes 1.32 introduced support (in Alpha) for pod-level resource specification:
 https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/#pod-level-resource-specification
 
 When just considering requests the only requirement is that a node has an instance type with enough
