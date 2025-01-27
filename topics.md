@@ -1,8 +1,16 @@
 # Blog post topics
 
 
-## Kubernetes Node Group Architecture
+## AI Whisperer
 
+Implement k8s-ai in Golang and/or rust and extend it ti support multiple tools including:
+
+- kubectl 
+- git
+- OpenAI (higher-level models)
+- cloud provider CLIs (aws, gcloud, az)
+
+## Kubernetes Node Group Architecture
 
 ## Kubernetes Resource Fine-tuning 
 
