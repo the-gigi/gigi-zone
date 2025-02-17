@@ -235,8 +235,8 @@ I wrote some blog posts on my Postgres adventures:
 
 # 💰 Cost Tracking 💰
 
-Money is king. The only way a startup fails is by running out of money. Unfortunately, if it's the
-only way for some reason lots of startups. So, as a frugal startup we wanted track our infra costs
+Money is king. The only way a startup fails is by running out of money. Unfortunately, it happens to
+most startups. The odds are NOT in your favor 🎲. So, as a frugal startup we wanted track our infra costs
 very closely. I spent some time building a cost tracking tool that pulls data from AWS, Datadog and
 OpenAI and created a streamlit app to visualize it. Later I also integrated it
 with [Preset](https://preset.io), which is
