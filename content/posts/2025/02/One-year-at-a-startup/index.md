@@ -1,6 +1,6 @@
 +++
 title = 'One Year at a Startup'
-date = 2025-02-16T13:07:12-08:00
+date = 2025-02-16T10:07:12-08:00
 +++
 
 At the beginning of 2024, I joined [Invisible Platforms](https://getinvisible.com) 🥷 - a small
@@ -21,7 +21,8 @@ technical deep dive, but more of a high-level overview of what I've been up to.
 # 🍵 Java 🍵
 
 Somehow throughout my illustrious career the professional Java code I've written was a 3 months
-project more than 20 years ago. Of course, I had to write an [article](https://github.com/the-gigi/vintage-technical-writing/tree/master/dr-dobbs/Maven%20-%20Building%20Complex%20Systems)
+project more than 20 years ago. Of course, I had to write
+an [article](https://github.com/the-gigi/vintage-technical-writing/tree/master/dr-dobbs/Maven%20-%20Building%20Complex%20Systems)
 about it. My previous company was actually a Java shop, but I was on the infra side of things, where
 we used Golang. Anyway, at Invisible Platforms I learned Java + Gradle pretty quick, and now I can
 add to my belt yet another programming language where I wrote production code.
@@ -31,7 +32,7 @@ feel that C# is a better Java than Java, but at the end of the day programming l
 tool to express your ideas and often the ecosystem is much more important. I've never seen a project
 fails or succeeds because of a programming language choice.
 
-# infrastructure Provisioning with Pulumi
+# ⚙️ Infrastructure Provisioning with Pulumi ⚙️
 
 At Invisible Platforms we use Pulumi to provision our infrastructure. I've used Terraform a lot
 before, and let's just say I wasn't a big fan and leave it at that. Pulumi is much better
@@ -92,11 +93,11 @@ Azure OpenAI and Google Gemini. I'm the guy that gets things started, opens acco
 access and API keys and integrate it into our internal AI library. I also provisioned AWs Bedrock
 knowledge bases in Pulumi (which was tricky due to dependency on AWs OpenSearch serverless).
 
-## simple-openai
+## 🤖 simple-openai 🤖
 
-I also spent a lot of time with core AI library. One of my first projects was to pick a new client
-library, as the library we were using at the time was not actively maintained, and we wanted to play
-with the latest and greatest features of OpenAI. I evaluated several libraries and
+I also spent a lot of time with our core AI library. One of my first projects was to pick a new
+client library, as the library we were using at the time was not actively maintained, and we wanted
+to play with the latest and greatest features of OpenAI. I evaluated several libraries and
 picked [simple-openai](https://github.com/sashirestela/simple-openai).
 
 Naturally, I wrote a blog post about
@@ -182,7 +183,8 @@ companies.
 
 It became a multi-month project that involved the entire company from top-management, to IT and
 every employee. It required evaluating multiple platforms and vendors, integrating various security
-services from multiple 3rd party providers like AWS, Okta, GitHub and Datadog. In the end I settled on
+services from multiple 3rd party providers like AWS, Okta, GitHub and Datadog. In the end I settled
+on
 Drata as our compliance platform and also picked a audit firm and a pentesting vendor.
 
 In the end we accomplished SOC 2 Type 2 compliance 🏆.

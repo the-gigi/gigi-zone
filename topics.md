@@ -16,6 +16,10 @@ Implement k8s-ai in Golang and/or rust and extend it ti support multiple tools i
 
 ## Datadog LLM Observability
 
+## GithubActions Development and Testing
+
+- blue-green
+
 ## Configuration Files Considered Harmful (Sort of)
 
 There is nothing like a good "<Blank> is considered Harmful" essay to exasperate the unwashed masses of anguished

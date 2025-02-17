@@ -1,3 +1,9 @@
++++
+title = 'Kubernetes node pool architecture'
+date = 2025-01-01T00:00:00-07:00
+draft = true
++++
+
 Here are some common patterns:
 
 ### One big shared node pool
