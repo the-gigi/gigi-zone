@@ -1,6 +1,25 @@
 # Blog post topics
 
 
+## Exploring Ephemeral Storage on Kubernetes
+
+- Disk bloater
+- Reclaiming ephemeral storage
+- Issue https://github.com/kubernetes/kubernetes/issues/71869
+
+
+## Invisible DNS with Cloudflare
+
+- Cloufdlare workers
+- request handling 
+- response handling
+- routing
+- Framer custom domains
+
+## GithubActions Development and Testing
+
+- blue-green
+
 ## AI Whisperer
 
 Implement k8s-ai in Golang and/or rust and extend it ti support multiple tools including:
@@ -12,13 +31,7 @@ Implement k8s-ai in Golang and/or rust and extend it ti support multiple tools i
 
 ## Kubernetes Node Group Architecture
 
-## Kubernetes Resource Fine-tuning 
-
-## Datadog LLM Observability
-
-## GithubActions Development and Testing
-
-- blue-green
+## Kubernetes Resource Fine-tuning
 
 ## Configuration Files Considered Harmful (Sort of)
 
@@ -75,8 +88,6 @@ https://github.com/the-gigi/dotfiles/blob/master/rcfiles/.p10k.zsh
 - gcloud
 - az
 - psql
-
-## How kube-forward works
 
 ## Fuzz-Emoji - Polyglot Fun
 
