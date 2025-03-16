@@ -8,7 +8,7 @@
 - Issue https://github.com/kubernetes/kubernetes/issues/71869
 
 
-## Invisible DNS with Cloudflare
+## Invisible DNS with Cloudflare Workers
 
 - Cloufdlare workers
 - request handling 
@@ -20,7 +20,7 @@
 
 - blue-green
 
-## AI Whisperer
+## AI-6
 
 Implement k8s-ai in Golang and/or rust and extend it ti support multiple tools including:
 
