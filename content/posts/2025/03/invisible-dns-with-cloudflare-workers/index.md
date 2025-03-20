@@ -66,7 +66,7 @@ CDN content after DNS resolution is over.
 I hope I don't get in trouble for using the
 expression ["Killing three birds..."](https://youtu.be/NBGOryiqZZI?si=-eNX-7auZ3TG9hG8&t=116) :-)
 
-Anyway, I built a Cloudflare worker called "framer-gateway-worker". It performs two functions:
+Anyway, I built a Cloudflare worker called "framer-gateway-worker". It performs three functions:
 
 1. Routes from our URLs directly to Framer URLs (users never see the Framer URLs)
 2. Update page metadata URLs
