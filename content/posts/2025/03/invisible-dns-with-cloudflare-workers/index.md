@@ -176,8 +176,6 @@ I chose 192.0.1, which is very common.
 - Cloudflare workers can sidestep Framer's limitations
 - I barely scratched the surface regarding Cloudflare workers
 
-<div style="display:inline-block; border: 2px solid #ccc; padding: 10px; border-radius: 8px;">
-  💡 Cloudflare workers are the eBPF of the Internet.💡
-</div>
+💡 Cloudflare workers are the eBPF of the Internet.💡
 
 Buon fine settimana, miei amici! 🇮🇹
