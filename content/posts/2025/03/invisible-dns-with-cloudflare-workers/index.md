@@ -61,15 +61,16 @@ requests, route or redirect them, and alter responses before they are sent back 
 Cloudflare is unique in this respect. Other CDN providers offer similar functionality, but only for requests to
 CDN content after DNS resolution is over.
 
-## 🦜 Killing Two Birds with one Cloudflare Worker 🦜
+## 🦜 Killing Three Birds with one Cloudflare Worker 🦜
 
 I hope I don't get in trouble for using the
-expression ["Killing two birds..."](https://youtu.be/NBGOryiqZZI?si=-eNX-7auZ3TG9hG8&t=116) :-)
+expression ["Killing three birds..."](https://youtu.be/NBGOryiqZZI?si=-eNX-7auZ3TG9hG8&t=116) :-)
 
 Anyway, I built a Cloudflare worker called "framer-gateway-worker". It performs two functions:
 
 1. Routes from our URLs directly to Framer URLs (users never see the Framer URLs)
-2. Add the proper HTTP headers for Clickjack protection before returning the responses from Framer to the users.
+2. Update page metadata URLs
+3. Add the proper HTTP headers for Clickjack protection before returning the responses from Framer to the users.
 
 Let's see how it works. The Cloudflare worker code is a simple Javascript program that listens for the "fetch" event and
 calls the `handleRequest()` function.
@@ -107,8 +108,9 @@ async function handleRequest(request) {
   const response = await fetch(newRequest)
 ```  
 
-Once the response is received, it replaces mentions of `framer.website` with `.com`, so to the users it appears they
-received a response from our domain. For example, `takafinance.framer.website` will become `takafinance,com`.
+Once the response is received, it replaces mentions of `framer.website` with `.com`. For example,
+`takafinance.framer.website` will become `takafinance.com`. This is important because the HTML head section contains
+metadata nad canonical URLs that need to be fixed
 
 ```
 let html = await response.text();
@@ -155,10 +157,12 @@ routes = [
 ```
 
 Note that we still have to create DNS A records proxied to Cloudflare (AKA Orange cloud) in order for Cloudflare to try
-to resolve DNS requests for these domains and then because the routes exist it delegates the heavy lifting the Cloudflare
+to resolve DNS requests for these domains and then because the routes exist it delegates the heavy lifting the
+Cloudflare
 worker.
 
-The content of the DNS A records doesn't matter because the worker takes care of it, but we must choose some value even if it
+The content of the DNS A records doesn't matter because the worker takes care of it, but we must choose some value even
+if it
 is ignored. The best practice for placeholder IP addresses is to use an IP addresses from one of the documentation
 blocks. See https://www.rfc-editor.org/rfc/rfc5737.
 
