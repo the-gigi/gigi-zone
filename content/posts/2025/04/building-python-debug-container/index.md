@@ -1,6 +1,6 @@
 +++
 title = 'Building a Kubernetes Debug Container Image with Docker'
-date = 2025-04-07T08:07:12-08:00
+date = 2025-04-13T21:07:12-08:00
 +++
 
 Building optimized container images is a science 🧪 and an art 🎨. You need to know what you're doing to get it right. In
