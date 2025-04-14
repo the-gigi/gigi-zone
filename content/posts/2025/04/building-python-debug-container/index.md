@@ -10,7 +10,7 @@ discuss some of the best practices for building images, when they apply and when
 For the impatient:  
 https://github.com/the-gigi/docker-images/tree/main/py-kube
 
-**When you realize the difference between the container and the content, you will have knowledge. ~ Idries Shah**
+**“When you realize the difference between the container and the content, you will have knowledge.” ~ Idries Shah**
 
 <!--more-->
 
