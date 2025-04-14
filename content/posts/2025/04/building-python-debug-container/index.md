@@ -3,7 +3,7 @@ title = 'Building a Kubernetes Debug Container Image with Docker'
 date = 2025-04-12T21:54:12-08:00
 +++
 
-Building an optimized container images is a science 🧪 and an art 🎨. You need to know what you're doing to get it right.
+Building optimized container images is a science 🧪 and an art 🎨. You need to know what you're doing to get it right.
 In this post, we will build a Python-based 🐍 container image for troubleshooting Kubernetes ☸️️. Along the way, we will
 discuss some of the best practices for building images, when they apply and when they don't! 🔍
 
