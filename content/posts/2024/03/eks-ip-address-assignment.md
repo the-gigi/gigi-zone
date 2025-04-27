@@ -8,6 +8,8 @@ cluster has run out of IP addresses 😱. To be continued...
 
 <!--more-->
 
+![img.png](hero.png)
+
 Kubernetes is this thing that orchestrates containerized workloads that run on a bunch of nodes.
 Yes, I'm  aware that [it does a few other things too](https://www.amazon.com/Kubernetes-operate-world-class-container-native-systems/dp/1804611395).
 
