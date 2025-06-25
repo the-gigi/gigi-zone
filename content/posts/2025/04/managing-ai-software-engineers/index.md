@@ -8,8 +8,8 @@ Two weeks ago I became a manager 👨‍💼 again. Throughout my career, I have
 software development a couple of times. But, I always stayed close to the code 💻, and remained hands-on. This time may
 be different. I'll tell you why. But first, let me introduce my team: Devin, Claude and OpenHands... 🤖
 
-*“Unfortunately, humans have a long history of trying to fix their engineering mistakes with more engineering
-mistakes!” ~ Steven Magee*
+**“Unfortunately, humans have a long history of trying to fix their engineering mistakes with more engineering
+mistakes!” ~ Steven Magee**
 
 <!--more-->
 

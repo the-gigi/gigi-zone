@@ -1,0 +1,34 @@
+<aside>
+  <h2>📅 Archive</h2>
+  {{ $posts := where .Site.RegularPages "Type" "posts" }}
+  {{ $groupedByYear := $posts.GroupByDate "2006" }}
+
+  <ul>
+    {{ range $year := $groupedByYear }}
+      <li>
+        <div class="year-toggle">
+          <span class="toggle-icon">▶</span>
+          <span>{{ $year.Key }} ({{ len $year.Pages }})</span>
+        </div>
+        <div class="year-content">
+          {{ $groupedByMonth := $year.Pages.GroupByDate "January" }}
+          {{ range $month := $groupedByMonth }}
+            <div style="margin-bottom: 1rem;">
+              <strong style="color: #555; font-size: 0.9rem;">{{ $month.Key }}</strong>
+              <ul style="margin-top: 0.25rem;">
+                {{ range $month.Pages }}
+                  <li style="margin: 0.25rem 0;">
+                    <a href="{{ .RelPermalink }}" style="display: flex; align-items: flex-start; gap: 0.5rem;">
+                      <span style="color: #0066cc; margin-top: 0.125rem;">•</span>
+                      <span>{{ .Title }}</span>
+                    </a>
+                  </li>
+                {{ end }}
+              </ul>
+            </div>
+          {{ end }}
+        </div>
+      </li>
+    {{ end }}
+  </ul>
+</aside>

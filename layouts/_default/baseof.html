@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="{{ site.LanguageCode | default site.Language.Lang  }}" {{- with partialCached "func/GetLanguageDirection" "GetLanguageDirection" }} dir="{{ . }}" {{- end }}>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    {{/* NOTE: the Site's title, and if there is a page title, that is set too */}}
+    <title>{{ block "title" . }}{{ with .Params.Title }}{{ . }} | {{ end }}{{ .Site.Title }}{{ end }}</title>
+    <meta name="viewport" content="width=device-width,minimum-scale=1">
+    <meta name="description" content="{{ with .Description }}{{ . }}{{ else }}{{if .IsPage}}{{ .Summary }}{{ else }}{{ with .Site.Params.description }}{{ . }}{{ end }}{{ end }}{{ end }}">
+    {{ hugo.Generator }}
+    {{/* NOTE: For Production make sure you add `HUGO_ENV="production"` before your build command */}}
+    {{ $production := eq (getenv "HUGO_ENV") "production" | or (eq site.Params.env "production") }}
+    {{ $public := not .Params.private }}
+    {{ if and $production $public }}
+      <meta name="robots" content="index, follow">
+    {{ else }}
+      <meta name="robots" content="noindex, nofollow">
+    {{ end }}
+
+    {{ partial "site-style.html" . }}
+    {{ partial "site-scripts.html" . }}
+
+    {{ block "favicon" . }}
+      {{ partialCached "site-favicon.html" . }}
+    {{ end }}
+
+    {{ if .OutputFormats.Get "RSS" }}
+    {{ with .OutputFormats.Get "RSS" }}
+      <link href="{{ .RelPermalink }}" rel="alternate" type="application/rss+xml" title="{{ $.Site.Title }}" />
+      <link href="{{ .RelPermalink }}" rel="feed" type="application/rss+xml" title="{{ $.Site.Title }}" />
+      {{ end }}
+    {{ end }}
+
+    {{ if .Params.canonicalUrl }}
+      <link rel="canonical" href="{{ .Params.canonicalUrl }}">
+    {{ else }}
+      <link rel="canonical" href="{{ .Permalink }}">
+    {{ end }}
+
+    {{/* NOTE: These Hugo Internal Templates can be found starting at https://github.com/gohugoio/hugo/tree/master/tpl/tplimpl/embedded/templates */}}
+    {{- template "_internal/opengraph.html" . -}}
+    {{- template "_internal/schema.html" . -}}
+    {{- template "_internal/twitter_cards.html" . -}}
+
+    {{ if eq (getenv "HUGO_ENV") "production" | or (eq .Site.Params.env "production")  }}
+      {{ template "_internal/google_analytics.html" . }}
+    {{ end }}
+	{{ block "head" . }}{{ partial "head-additions.html" . }}{{ end }}
+    
+    <style>
+      .content-with-sidebar {
+        display: flex;
+        gap: 2rem;
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 0 1rem;
+      }
+      .main-content {
+        flex: 1;
+      }
+      .sidebar {
+        flex: 0 0 250px;
+        background: #f8f9fa;
+        padding: 1rem;
+        border-radius: 8px;
+        height: fit-content;
+        position: sticky;
+        top: 2rem;
+      }
+      .sidebar h2 {
+        margin-top: 0;
+        color: #333;
+        font-size: 1.2rem;
+      }
+      .sidebar ul {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+      }
+      .sidebar li {
+        margin: 0.5rem 0;
+      }
+      .year-toggle {
+        cursor: pointer;
+        user-select: none;
+        font-weight: bold;
+        color: #0066cc;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+      }
+      .year-toggle:hover {
+        color: #004499;
+      }
+      .year-content {
+        display: none;
+        margin-left: 1rem;
+        margin-top: 0.5rem;
+      }
+      .year-content.expanded {
+        display: block;
+      }
+      .toggle-icon {
+        transition: transform 0.2s;
+      }
+      .expanded .toggle-icon {
+        transform: rotate(90deg);
+      }
+      .sidebar a {
+        color: #666;
+        text-decoration: none;
+        font-size: 0.9rem;
+      }
+      .sidebar a:hover {
+        color: #0066cc;
+      }
+      @media (max-width: 768px) {
+        .content-with-sidebar {
+          flex-direction: column;
+        }
+        .sidebar {
+          flex: none;
+          position: static;
+        }
+      }
+    </style>
+  </head>
+
+  <body class="ma0 {{ $.Param "body_classes"  | default "avenir bg-near-white"}}{{ with getenv "HUGO_ENV" }} {{ . }}{{ end }}">
+
+    {{ block "header" . }}{{ partial "site-header.html" .}}{{ end }}
+    <main class="pb7" role="main">
+      <div class="content-with-sidebar">
+        <div class="main-content">
+          {{ block "main" . }}{{ end }}
+        </div>
+        <div class="sidebar">
+          {{ partial "sidebar.html" . }}
+        </div>
+      </div>
+    </main>
+    {{ block "footer" . }}{{ partialCached "site-footer.html" . }}{{ end }}
+    
+    <script>
+      document.addEventListener('DOMContentLoaded', function() {
+        const yearToggles = document.querySelectorAll('.year-toggle');
+        yearToggles.forEach(toggle => {
+          toggle.addEventListener('click', function() {
+            const content = this.nextElementSibling;
+            const isExpanded = content.classList.contains('expanded');
+            
+            // Close all other years
+            document.querySelectorAll('.year-content').forEach(c => c.classList.remove('expanded'));
+            document.querySelectorAll('.year-toggle').forEach(t => t.classList.remove('expanded'));
+            
+            // Toggle current year
+            if (!isExpanded) {
+              content.classList.add('expanded');
+              this.classList.add('expanded');
+            }
+          });
+        });
+      });
+    </script>
+  </body>
+</html>
