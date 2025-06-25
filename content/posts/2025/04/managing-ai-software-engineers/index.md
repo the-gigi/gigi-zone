@@ -1,6 +1,7 @@
 +++
 title = '🚀 Managing Software Engineers in the AI Era'
 date = 2025-04-20T21:54:12-08:00
+categories = ["AI"]
 +++
 
 Two weeks ago I became a manager 👨‍💼 again. Throughout my career, I have managed several teams. I was even a director of

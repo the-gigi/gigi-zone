@@ -1,6 +1,7 @@
 +++
 title = 'Postgres on K8s'
 date = 2024-05-30T16:52:57-07:00
+categories = ["Kubernetes", "Database"]
 +++
 
 Your postgres DB 🌐 runs in the cloud with a private IP address. It requires a password 🔐. You need

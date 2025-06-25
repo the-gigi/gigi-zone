@@ -1,6 +1,7 @@
 +++
-title = 'When Ephemeral Storage in Kubernetes isn’t so Ephemeral'
+title = 'When Ephemeral Storage in Kubernetes isn`t so Ephemeral'
 date = 2025-02-26T08:07:12-08:00
+categories = ["Kubernetes", "DevOps"]
 +++
 
 Ephemeral storage 📦 is a fancy way of saying temporary storage. In Kubernetes ☸️️, it means storage that is associated

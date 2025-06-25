@@ -1,6 +1,7 @@
 +++
 title = 'EKS IP Address Assignment'
 date = 2024-03-10T20:12:31-07:00
+categories = ["Kubernetes", "DevOps"]
 +++
 
 It was a dark night. The wind was howling outside. Suddenly, I got a Slack message that our EKS

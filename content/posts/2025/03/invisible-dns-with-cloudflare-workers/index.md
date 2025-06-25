@@ -1,6 +1,7 @@
 +++
 title = 'DNS, Cloudflare Workers and Framer!'
 date = 2025-03-15T08:07:12-08:00
+categories = ["DevOps"]
 +++
 
 Everything on the internet starts with [DNS](https://en.wikipedia.org/wiki/Domain_Name_System) 🌐, so it's kinda

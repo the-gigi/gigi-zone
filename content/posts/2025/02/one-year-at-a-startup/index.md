@@ -1,6 +1,7 @@
 +++
 title = 'One Year at a Startup'
 date = 2025-02-16T10:07:12-08:00
+categories = ["AI", "DevOps"]
 +++
 
 At the beginning of 2024, I joined [Invisible Platforms](https://getinvisible.com) 🥷 - a small

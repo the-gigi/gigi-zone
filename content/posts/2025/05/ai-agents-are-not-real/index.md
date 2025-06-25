@@ -1,6 +1,7 @@
 +++
 title = '🤖 AI Agents are not Real'
 date = 2025-05-11T21:54:12-08:00
+categories = ["AI"]
 +++
 
 AI agents are all the rage these days. They’re the new shiny ✨ toy that everyone wants to play with 🧸.

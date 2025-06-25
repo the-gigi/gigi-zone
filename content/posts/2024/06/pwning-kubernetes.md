@@ -1,6 +1,7 @@
 +++
 title = 'Pwning Kubernetes'
 date = 2024-06-10T00:39:07-07:00
+categories = ["Kubernetes"]
 +++
 
 Kubernetes is insecure by default! Let's Pwn it to make a Pwoint (see what I did there?) 😜.

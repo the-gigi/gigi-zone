@@ -1,6 +1,7 @@
 +++
 title = 'Advanced Kubernetes Scheduling and Autoscaling'
 date = 2024-05-16T17:45:11-07:00
+categories = ["Kubernetes", "DevOps"]
 +++
 
 What do you know about the intricate web 🕷️ of interactions between advanced Kubernetes scheduling

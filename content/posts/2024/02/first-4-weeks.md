@@ -1,6 +1,7 @@
 +++
 title = 'First 4 Weeks'
 date = 2024-02-17T15:49:36-08:00
+categories = ["AI", "DevOps"]
 +++
 
 I recently joined a [cool startup](https://getinvisible.com) with some awesome people!

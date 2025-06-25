@@ -1,6 +1,7 @@
 +++
 title = 'Github Actions Versioning'
 date = 2024-04-02T00:12:31-07:00
+categories = ["DevOps"]
 +++
 
 TIL: When using un-pinned versions you must use **@v<major version>**. When using pinned patch

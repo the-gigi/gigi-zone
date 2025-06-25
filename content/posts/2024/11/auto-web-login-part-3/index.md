@@ -1,6 +1,7 @@
 +++
 title = 'Auto Web Login - Part III'
 date = 2024-11-03T17:00:00-07:00
+categories = ["DevOps"]
 +++
 
 Welcome to episode #3, where lazy man🚶‍ Gigi recruits AppleScript 🍎 to automatically close browser

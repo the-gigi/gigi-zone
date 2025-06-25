@@ -1,6 +1,7 @@
 +++
 title = 'Blue/Green Upgrade for Postgres on AWS RDS'
 date = 2024-12-28T13:07:12-08:00
+categories = ["Database", "DevOps"]
 +++
 
 Today we are going deep on upgrading Postgres on AWS RDS to a new major version. You may be shocked,

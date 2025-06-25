@@ -1,7 +1,7 @@
 +++
 title = 'Postgres on AWS RDS + EKS'
 date = 2024-09-02T15:53:30-07:00
-
+categories = ["Kubernetes", "Database"]
 +++
 
 You have an AWS EKS cluster ⎈ and your workloads use a managed Postgres DB 🌐 deployed on AWS RDS.

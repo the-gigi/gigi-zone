@@ -1,6 +1,7 @@
 +++
 title = 'Auto Web Login - Part I'
 date = 2024-09-22T18:00:00-07:00
+categories = ["DevOps"]
 +++
 
 Once upon a time there was a lazy man🚶‍. Let's call him Gigi (because that's his name) 😊. Gigi would

@@ -1,6 +1,7 @@
 +++
 title = 'In Search of the Best OpenAI Java Client'
 date = 2024-02-03T15:31:17-08:00
+categories = ["AI"]
 +++
 
 

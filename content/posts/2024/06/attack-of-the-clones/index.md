@@ -1,6 +1,7 @@
 +++
 title = 'Attack of the Clones'
 date = 2024-06-20T07:45:11-07:00
+categories = ["DevOps"]
 +++
 
 Imagine that nobody has to type `git clone` ever again! Can you even begin to comprehend what a

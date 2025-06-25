@@ -1,6 +1,7 @@
 +++
 title = 'About Horizontal Pod Autoscaling'
 date = 2025-01-26T13:07:12-08:00
+categories = ["Kubernetes", "DevOps"]
 +++
 
 Horizontal pod autoscaling is one of the best features of Kubernetes ☸️. In this short blog post

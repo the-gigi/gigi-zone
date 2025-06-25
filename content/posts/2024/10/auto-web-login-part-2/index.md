@@ -1,6 +1,7 @@
 +++
 title = 'Auto Web Login - Part II'
 date = 2024-10-26T17:00:00-07:00
+categories = ["DevOps"]
 +++
 
 In this episode, lazy man🚶‍ Gigi can't be bothered to manage two collections of items in a

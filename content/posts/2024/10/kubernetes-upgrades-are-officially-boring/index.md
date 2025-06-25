@@ -1,6 +1,7 @@
 +++
 title = 'Kubernetes Upgrades Are Officially Boring'
 date = 2024-10-20T17:39:07-07:00
+categories = ["Kubernetes", "DevOps"]
 +++
 
 In the olden days 🏰 (a few years ago) upgrading a Kubernetes cluster was a stressful task 😰 that

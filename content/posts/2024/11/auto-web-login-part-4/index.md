@@ -1,6 +1,7 @@
 +++
 title = 'Auto Web Login - Part IV'
 date = 2024-11-09T17:00:00-07:00
+categories = ["DevOps"]
 +++
 
 The **grand finale** is here, where lazy man🚶‍ Gigi defeats anti-Javascript

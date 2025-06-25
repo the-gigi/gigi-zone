@@ -1,6 +1,7 @@
 +++
 title = 'The Art and Science of Kubernetes Bin Packing'
 date = 2025-01-05T13:07:12-08:00
+categories = ["Kubernetes", "DevOps"]
 +++
 
 ☸️ Kubernetes is a powerful platform for running containerized workloads. It will happily scale your

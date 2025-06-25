@@ -1,6 +1,7 @@
 +++
 title = 'Fixing the OpenAI Tool Calling API'
 date = 2024-08-04T12:51:52-07:00
+categories = ["AI"]
 +++
 
 The design of the OpenAI tool calling API can cost you major bucks 💵. In this blog post I dive into

@@ -1,6 +1,7 @@
 +++
 title = 'From Black Box to Glass Box: LLM Observability in Action 🚀'
 date = 2025-03-23T08:11:17-08:00
+categories = ["AI", "DevOps"]
 +++
 
 Observability 🔭 is table stakes for any serious system. But, when you throw GenAI and LLMs into the mix it is no longer

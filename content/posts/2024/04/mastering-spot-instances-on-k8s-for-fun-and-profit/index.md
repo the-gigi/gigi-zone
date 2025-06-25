@@ -1,6 +1,7 @@
 +++
 title = 'Mastering Spot Instances on Kubernetes for Fun and Profit'
 date = 2024-04-20T11:44:08-07:00
+categories = ["Kubernetes", "DevOps"]
 +++
 
 Spot instances are da bomb 💣!! You just have to be careful they don't explode in your face 💥🤯
