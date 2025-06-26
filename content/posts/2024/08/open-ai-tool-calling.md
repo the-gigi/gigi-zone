@@ -88,7 +88,7 @@ from the array you provided. It can take several values
 - **auto**: the model decides which tools if any to invoke
 - **required**: the model must invoke at least one tool. The model decides which tool/s to invoke.
 - **none**: the model must not invoke any tool
-- **function** (with a name): the mode must invoke exactly the function tool with the provided name
+- **function** (with a name): the model must invoke exactly the function tool with the provided name
 
 This design is broken! 💔
 
