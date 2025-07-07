@@ -1,21 +1,6 @@
 # Blog post topics
 
 
-## Exploring Ephemeral Storage on Kubernetes
-
-- Disk bloater
-- Reclaiming ephemeral storage
-- Issue https://github.com/kubernetes/kubernetes/issues/71869
-
-
-## Invisible DNS with Cloudflare Workers
-
-- Cloufdlare workers
-- request handling 
-- response handling
-- routing
-- Framer custom domains
-
 ## GithubActions Development and Testing
 
 - blue-green
