@@ -1,13 +1,22 @@
 # Blog post topics
 
 
-## GithubActions Development and Testing
-
-- blue-green
-
 ## AI-6
 
 Implement k8s-ai in Golang and/or rust and extend it ti support multiple tools including:
+
+
+## Adding Gemini support to simple-openai
+
+
+
+
+
+
+
+
+
+
 
 - kubectl 
 - git
@@ -47,10 +56,6 @@ https://www.docker.com/blog/docker-best-practices-choosing-between-run-cmd-and-e
 ## Dockerize the World
 
 https://github.com/the-gigi/docker-images
-
-
-
-## Datadog LLM Observability, OpenTelemetry and Async tracing
 
 
 ## AppleScript vs. JXA
