@@ -18,7 +18,7 @@ code 💻, collaboration 🤝, and the quest for robust interoperability 🔧 in
 At [Invisible Platforms](https://www.getinvisisble.com) we use all the top-level LLM models. This is a very dynamic list
 and the leaders keep changing. We are a Java shop (Yes! Java can do AI. thanks for asking), and we
 use [simple-openai](https://github.com/sashirestela/simple-openai) as our Java client library to interact with the
-OpenAI API. It is a great library that that was initially designed to support OpenAI proper, but overtime
+OpenAI API. It is a great library that was initially designed to support OpenAI proper, but overtime
 was [extended to support other LLM providers](https://github.com/sashirestela/simple-openai/pull/47) as long as they
 offer an OpenAI-compatible API.
 
@@ -157,7 +157,7 @@ So, we can't just ignore it. We need to fix it.
 
 To summarize we have two problems that will require low-level tinkering at the HTTP request and response level.
 
-🔐 Custom Auth via the Request Interceptor 🔐
+# 🔐 Custom Auth via the Request Interceptor 🔐
 
 OK. Let's start with the first problem. At the end of the day, simple-openai needs to send an HTTP request to the Gemini
 OpenAI-compatible endpoint that includes the following header:
