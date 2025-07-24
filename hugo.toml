@@ -5,3 +5,12 @@ theme = 'ananke'
 buildFuture = true
 [params]
     custom_css = ['custom.css']
+
+    [params.giscus]
+        enable = true
+        repo = "the-gigi/gigi-zone"
+        repoId = "R_kgDOLNmvyw"
+        category = "General"
+        categoryId = "DIC_kwDOLNmvy84CtYTb"
+        theme = "preferred_color_scheme"
+        lang = "en"
