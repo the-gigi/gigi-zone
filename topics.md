@@ -1,27 +1,28 @@
 # Blog post topics
 
 
+
+## Python concurrency
+
+- asyncio
+- threading
+- multiprocessing
+- concurrent.futures
+- concurrent.interpreters
+
+
+## Python-ish languages
+
+- Cython
+- PyPy
+- Mojo
+- Interoperability with CPython
+- honorable mention - Nuitka
+
+
 ## AI-6
 
-Implement k8s-ai in Golang and/or rust and extend it ti support multiple tools including:
-
-
-## Adding Gemini support to simple-openai
-
-
-
-
-
-
-
-
-
-
-
-- kubectl 
-- git
-- OpenAI (higher-level models)
-- cloud provider CLIs (aws, gcloud, az)
+Implement k8s-ai in Golang and/or rust with only MCP support.
 
 ## Kubernetes Node Group Architecture
 
@@ -53,17 +54,10 @@ When config files shine.
 
 https://www.docker.com/blog/docker-best-practices-choosing-between-run-cmd-and-entrypoint
 
-## Dockerize the World
-
-https://github.com/the-gigi/docker-images
 
 
 ## AppleScript vs. JXA
 
-
-## OpenAI JavaClient library
-
-https://github.com/the-gigi/llm-playground-java/
 
 ## Prompt Engineering (the old kind)
 
@@ -71,7 +65,9 @@ https://github.com/the-gigi/dotfiles/blob/master/components/prompt.sh
 
 https://github.com/the-gigi/dotfiles/blob/master/rcfiles/.p10k.zsh
 
-## The CLI is an API
+## The CLI is the API
+
+Especially for AI agents
 
 - kubectl
 - aws
@@ -85,9 +81,7 @@ https://github.com/the-gigi/dotfiles/blob/master/rcfiles/.p10k.zsh
 - Golang
 - Rust
 
-## Free as in Tier
-
-Fuzz-emoji in the cloud
+## Fuzz-emoji in the cloud
 
 - AWS Lambda
 - Google Cloud Functions
@@ -96,6 +90,13 @@ Fuzz-emoji in the cloud
 ## Knative functions
 
 Fuzz-emoji in Kubernetes
+
+## Free as in Tier
+
+- https://cloud.google.com/free/docs/free-cloud-features#free-tier
+- 
+
+
 
 ## Python f-strings
 
