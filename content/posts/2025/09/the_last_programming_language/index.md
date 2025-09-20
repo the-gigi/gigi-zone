@@ -94,15 +94,18 @@ This brings us to the last programming language.
 The last programming language is the last language where human express their intents and collaborate with AI
 agents to implement them and review the AI artifacts. But what is the last programming language? Is it Python?
 JavaScript? Go? Rust? Something else?
-Nope. are you ready? drum roll please... 🥁
-.
-.
-.
-.
-The last programming language is Markdown! 🎉
+Nope. are you ready? drum roll please... 🥁 The last programming language is...
+
+&nbsp;.
+
+&nbsp;.
+
+&nbsp;.
+
+Markdown! 🎉
 
 Markdown is the last programming language because it is the simplest and most expressive way to communicate formally
-with AI 🤖. Humans can write and edit it easily ✍️. AI agents can parse and understand it easily 🧠. It is a perfect
+with AI 🤖. Humans can read, write and edit it easily ✍️. AI agents can parse and understand it easily 🧠. It is a perfect
 medium for human-AI collaboration.
 
 It is easy to embed Mermaid diagrams to illustrate complex workflows 📊 or just regular images 🖼️. You can also embed
