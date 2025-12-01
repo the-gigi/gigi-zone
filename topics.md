@@ -1,7 +1,5 @@
 # Blog post topics
 
-
-
 ## Python concurrency
 
 - asyncio
@@ -9,7 +7,6 @@
 - multiprocessing
 - concurrent.futures
 - concurrent.interpreters
-
 
 ## Python-ish languages
 
@@ -19,12 +16,23 @@
 - Interoperability with CPython
 - honorable mention - Nuitka
 
-
 ## AI-6
 
 Implement k8s-ai in Golang and/or rust with only MCP support.
 
+## Confessions of an ex-coder
+
+I used to be a coder. Every day I would pop up my IDEs (yes, plural) and happily bust some code. Life was good. But,
+then AI arrived and quickly improved. First, it was just a little bit fancy code completion. I'll ask the AI to do
+something little bit more complicated and it would fail hilariously. Then, it got better and better. 
+
 ## Kubernetes Node Group Architecture
+
+## Kubernetes Blazing Fast Pods - Placeholder pattern
+
+## Kubernetes Blazing Fast Pods - Idle Pool pattern
+
+## Kubernetes Leader Election
 
 ## Kubernetes Resource Fine-tuning
 
@@ -35,7 +43,7 @@ software engineers toiling over their keyboards.
 
 ????
 
-- Using direct Programming language structures 
+- Using direct Programming language structures
 - Embedding configuration
 - Hybrid (overrides)
 - Dynamic configuration
@@ -54,10 +62,7 @@ When config files shine.
 
 https://www.docker.com/blog/docker-best-practices-choosing-between-run-cmd-and-entrypoint
 
-
-
 ## AppleScript vs. JXA
-
 
 ## Prompt Engineering (the old kind)
 
@@ -94,9 +99,7 @@ Fuzz-emoji in Kubernetes
 ## Free as in Tier
 
 - https://cloud.google.com/free/docs/free-cloud-features#free-tier
-- 
-
-
+-
 
 ## Python f-strings
 
@@ -105,12 +108,12 @@ https://docs.python.org/3/reference/lexical_analysis.html#f-strings
 
 Compare to other languages
 
-| Language      | Equivalent to Python f-string                                | Syntax Example                                    | Example Output           |
-|---------------|--------------------------------------------------------------|--------------------------------------------------|--------------------------|
-| **C/C++**     | `sprintf` or `std::format` (C++20)                           | `std::format("Hello, {}!", name);`               | `Hello, Gigi!`           |
-| **Java**      | `String.format`                                              | `String.format("Hello, %s!", name);`             | `Hello, Gigi!`           |
-| **JavaScript/TypeScript** | Template literals                                | `` `Hello, ${name}!` ``                          | `Hello, Gigi!`           |
-| **Go**        | `fmt.Sprintf`                                                | `fmt.Sprintf("Hello, %s!", name)`                | `Hello, Gigi!`           |
-| **Rust**      | `format!` macro                                              | `format!("Hello, {}!", name);`                   | `Hello, Gigi!`           |
-| **Ruby**      | String interpolation with `#{}`                              | `"Hello, #{name}!"`                              | `Hello, Gigi!`           |
-| **C#**        | String interpolation with `$`                                | `$"Hello, {name}!"`                              | `Hello, Gigi!`           |
+| Language                  | Equivalent to Python f-string      | Syntax Example                       | Example Output |
+|---------------------------|------------------------------------|--------------------------------------|----------------|
+| **C/C++**                 | `sprintf` or `std::format` (C++20) | `std::format("Hello, {}!", name);`   | `Hello, Gigi!` |
+| **Java**                  | `String.format`                    | `String.format("Hello, %s!", name);` | `Hello, Gigi!` |
+| **JavaScript/TypeScript** | Template literals                  | `` `Hello, ${name}!` ``              | `Hello, Gigi!` |
+| **Go**                    | `fmt.Sprintf`                      | `fmt.Sprintf("Hello, %s!", name)`    | `Hello, Gigi!` |
+| **Rust**                  | `format!` macro                    | `format!("Hello, {}!", name);`       | `Hello, Gigi!` |
+| **Ruby**                  | String interpolation with `#{}`    | `"Hello, #{name}!"`                  | `Hello, Gigi!` |
+| **C#**                    | String interpolation with `$`      | `$"Hello, {name}!"`                  | `Hello, Gigi!` |
