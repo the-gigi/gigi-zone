@@ -6,11 +6,12 @@ categories = ["Kubernetes", "Images", "Preloading", "Fast"]
 
 Let's continue our journey towards blazing fast pods on Kubernetes.
 In [Blazing Fast Pods - Placeholder Pattern](https://medium.com/@the.gigi/blazing-fast-pods-placeholder-pattern-a1b5781fddce)
-we saw how to get a pod scheduled immediately. But, that's just the beginning. Once the pod is scheduled to anode
-Kubernetes needs to download the images of all its containers before it can run. Ideally, the image is already on the
-node. Let's see how to make it happen every time
 
-**“Victory loves preparation”  ~ Latin proverb**
+we saw how to get a pod scheduled immediately. But, that's just the beginning. Once the pod is scheduled to a node
+Kubernetes needs to download the images of all its containers before it can run. Ideally, the images are already on the
+node. Let's see how to make it happen every time.
+
+**“Victory loves preparation” ~ Latin proverb**
 
 <!--more-->
 
@@ -42,7 +43,7 @@ Events:
   Normal  Started    4m     kubelet            Started container bash
 ```
 
-So, it took about 16 seconds to download 129338587 bytes for this image. That's compressed layers that needs to be
+So, it took about 16 seconds to download 129,338,587 bytes for this image. That's compressed layers that need to be
 decompressed and copied to disk. The bigger the image the longer the wait. But, that's not all. If your pod has multiple
 containers, Kubernetes will load the images for each container sequentially. There is no way to download images in
 parallel to the same node.
@@ -94,16 +95,16 @@ Events:
 As you can see the first image (Python) is downloaded and the container is started and only then the Golang image is
 downloaded and finally Rust. Overall it took more than 40 seconds to download the images.
 
-But, it can be even worse. If another pod is scheduled to the pod about the same time and needs to download an image our
+But, it can be even worse. If another pod is scheduled to the node at about the same time and that pod starts downloading an image our
 pod might have to wait for that pod.
-
-The bottom line is big images can really slow down your pod. We want our pods to be blazing fast. Let's get it!
 
 ![](images/sequential-image-pulling.png)
 
+The bottom line is that big images can really slow down your pod. We want our pods to be blazing fast. Let's get it!
+
 ## The Solution
 
-The solution is super simple. The images should already be present on the node, so we don't have to download them. Let's
+The solution is conceptually super simple. The images should already be present on the node, so we don't have to download them. Let's
 create another pod with the same containers.
 
 ```
@@ -147,10 +148,10 @@ Events:
 
 ## The Image Preloader
 
-OK. But, how do we make the images are always present on every node? This is where the Kubernetes DaemonSet comes in.
+OK. But, how do we make sure the images are always present on every node? This is where the Kubernetes DaemonSet comes in.
 The DaemonSet is a workload that is automatically provisioned on every node (or on every node that meets some condition).
 
-But, we don't want the daemonset to actually hog any resources on the node. All we want are the images. A nice trick is
+But, we don't want the DaemonSet to actually hog any resources on the node. All we want are the images. A nice trick is
 use init containers. Init containers in a pod are containers that Kubernetes loads before the regular containers,
 and when they are done it unloads them.
 
@@ -220,7 +221,7 @@ kind-control-plane   Ready    control-plane   28h   v1.33.1   172.19.0.7    <non
 
 ### 2. Delete pods and the preloader
 
-Clean up any existing test pods and remove the old preloader daemonset if it exists. This ensures we start from a clean
+Clean up any existing test pods and remove the old preloader DaemonSet if it exists. This ensures we start from a clean
 state.
 
 ```shell
@@ -228,7 +229,7 @@ state.
 pod "tri-lang" deleted
 
 ❯ kubectl -n kube-system delete ds image-preloader --ignore-not-found=true
-daemonset.apps "image-preloader" deleted
+DaemonSet.apps "image-preloader" deleted
 ```
 
 ### 3. Connect to the node and remove images
@@ -268,7 +269,7 @@ Verify they're gone (the "(none)" output confirms no matching images remain):
 ### 4. the preloader and verify it pulled all images
 
 Deploy the DaemonSet using the `echo ... | kubectl apply -f -` command from the previous section. The `rollout status`
-command blocks until the daemonset is fully deployed.
+command blocks until the DaemonSet is fully deployed.
 
 ```shell
 ❯ kubectl -n kube-system rollout status ds/image-preloader --timeout=180s
@@ -362,14 +363,14 @@ Events:
 ## Image Preloading Design
 
 Image preloading is a useful and effective technique on the quest for the holy grale of instant pods. But, not every pod
-requires instant loading. Your pre-loader daemonset shouldn't pre-load each and every image you may want to run in your
+requires instant loading. Your pre-loader DaemonSet shouldn't pre-load each and every image you may want to run in your
 cluster. Exercise judgement and curate the set of images you need to preload.
 
-Note that the daemonset manifest configuration includes the versions of every image and must be updated regularly (
+Note that the DaemonSet manifest configuration includes the versions of every image and must be updated regularly (
 hopefully you have a proper GitOps-based CI/CD process).
 
 If you run a sophisticated setup with multiple node pools where specific workloads are desginated to specific node pools
-then it makes sense to have multiple pre-loader daemonsets with node affinity and toleration for the target node pools.
+then it makes sense to have multiple pre-loader DaemonSets with node affinity and toleration for the target node pools.
 
 ### Example: Multiple Node Pools with Targeted Preloading
 
@@ -385,7 +386,7 @@ Let's say you have two node pools in your cluster:
 - Label: `workload-type=web`
 - Taint: `workload=web:NoSchedule` (prevents non-web pods from scheduling here)
 
-Here's how to create targeted preloader daemonsets for each pool:
+Here's how to create targeted preloader DaemonSets for each pool:
 
 **ML Node Pool Preloader:**
 
@@ -685,8 +686,8 @@ Removed: nginx:1.23, 1.24, python:3.12, the-app:v1.0, v1.1
 - Once a pod is scheduled on a node it needs to pull all its container images if not already present
 - Downloading large images can take a substantial time, especially if the pod has multiple containers
 - Even worse, the images must be pulled one after the other and might even be blocked by other pods pulling images
-- The solution is simply to ensure the images are always available on every node by using a preloader Daemonset
-- You can have different preloader Daemonsets with different images on different node pools
+- The solution is simply to ensure the images are always available on every node by using a preloader DaemonSet
+- You can have different preloader DaemonSets with different images on different node pools
 - Disable the built-in kubelet image GC and let preloader take care of intelligent unused image pruning
 
 🇪🇸 Agur lagunak 🇪🇸
