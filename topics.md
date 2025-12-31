@@ -20,15 +20,11 @@
 
 Implement k8s-ai in Golang and/or rust with only MCP support.
 
-## Confessions of an ex-coder
 
-I used to be a coder. Every day I would pop up my IDEs (yes, plural) and happily bust some code. Life was good. But,
-then AI arrived and quickly improved. First, it was just a little bit fancy code completion. I'll ask the AI to do
-something little bit more complicated and it would fail hilariously. Then, it got better and better. 
+## Pause and Resume Kubernetes Pods
+
 
 ## Kubernetes Node Group Architecture
-
-## Kubernetes Blazing Fast Pods - Placeholder pattern
 
 ## Kubernetes Blazing Fast Pods - Idle Pool pattern
 
