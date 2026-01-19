@@ -4,12 +4,12 @@ date = 2026-01-18T13:30:00-08:00
 categories = ["Claude", "ClaudeCode", "AICoding", "AIAgent", "CodingAssistant"]
 +++
 
-**"One of the keys to happiness is a bad memory." ~ Rita Mae Brown**
-
 When you start or resume a conversation with Claude Code it doesn't start from scratch. It knows a lot right off the
-bat, and it can recall even more stuff later. Now, there are multiple ways to structure this memory such as CLAUDE.md
-files, agent skills and sub-agents. Today, we're going to focus on CLAUDE.md files and level up your Claude Code game.
-We'll talk about what you should put in these files, and just as important what NOT to put there!
+bat, and it can recall even more stuff later. Now, there are multiple ways to structure this memory such as **CLAUDE.md**
+files, agent skills and sub-agents. Today, we're going to focus on **CLAUDE.md** files and level up your Claude Code
+game.
+
+**"One of the keys to happiness is a bad memory." ~ Rita Mae Brown**
 
 <!--more-->
 
@@ -22,11 +22,13 @@ This is the third article in the *CCDD* (Claude Code Deep Dive) series. The prev
 
 ## 🧠 The Claude Code Memory System 🧠
 
-CLAUDE.md files are instruction files that tell Claude Code how to work with your project. They're automatically loaded
+**CLAUDE.md** files are instruction files that tell Claude Code how to work with your project. They're automatically
+loaded
 into the context when you run Claude Code. Think of them as persistent notes you leave for Claude - project conventions,
 custom commands, team preferences, and anything else Claude should know before it starts working.
 
-Unlike regular conversation context that gets compacted or lost, CLAUDE.md files are always there. Every single session.
+Unlike regular conversation context that gets compacted or lost, **CLAUDE.md** files are always there. Every single
+session.
 This is your way to shape how Claude behaves without repeating yourself.
 
 ## 📍 Where in the World is CLAUDE.md? 📍
@@ -34,22 +36,31 @@ This is your way to shape how Claude behaves without repeating yourself.
 Claude Code automatically discovers and loads memory files from multiple locations in a hierarchy (from highest to
 lowest priority):
 
-| Memory Type | Location | Purpose                                            |
-|---|---|----------------------------------------------------|
-| **Enterprise Policy** | `/Library/Application Support/ClaudeCode/CLAUDE.md` (macOS) | Organization-wide instructions managed by IT       |
-| **Project Memory** | `./CLAUDE.md` or `./.claude/CLAUDE.md` | Team-shared instructions for the project           |
-| **Project Rules** | `./.claude/rules/*.md` | Modular, topic-specific project instructions       |
-| **User Memory** | `~/.claude/CLAUDE.md` | Personal preferences for all projects              |
-| **User Rules** | `~/.claude/rules/*.md` | Personal rules for all projects                    |
-| **Project Memory (Local)** | `./CLAUDE.local.md` | Personal project-specific preferences (deprecated) |
+**Enterprise Policy** — `/Library/Application Support/ClaudeCode/CLAUDE.md` (macOS)
+- Organization-wide instructions managed by IT
+
+**Project Memory** — `./CLAUDE.md` or `./.claude/CLAUDE.md`
+- Team-shared instructions for the project
+
+**Project Rules** — `./.claude/rules/*.md`
+- Modular, topic-specific project instructions
+
+**User Memory** — `~/.claude/CLAUDE.md`
+- Personal preferences for all projects
+
+**User Rules** — `~/.claude/rules/*.md`
+- Personal rules for all projects
+
+**Project Memory (Local)** — `./CLAUDE.local.md`
+- Personal project-specific preferences (deprecated)
 
 Claude Code combines all these memory files, automatically adding them to the prompt. When working with files in
-subdirectories, any CLAUDE.md files in those subdirectories are also pulled into the context.
+subdirectories, any **CLAUDE.md** files in those subdirectories are also pulled into the context.
 
-### The Hierarchy in Action
+### 🎬 The Hierarchy in Action 🎬
 
-Here's a typical setup showing how I organize things. My personal user CLAUDE.md contains stuff that applies to any
-project, be it a personal project or work-related. Here is a snippet from my personal global CLAUDE.md:
+Here's a typical setup showing how I organize things. My personal user **CLAUDE.md** contains stuff that applies to any
+project, be it a personal project or work-related. Here is a snippet from my personal global **CLAUDE.md**:
 
 **~/.claude/CLAUDE.md** (personal):
 
@@ -60,17 +71,18 @@ project, be it a personal project or work-related. Here is a snippet from my per
 - always run the unit tests after making changes
 ```
 
-And, here is a little snippet from a work project's CLAUDE.md
+And, here is a little snippet from a work project's **CLAUDE.md**
 
 ```markdown
 - don't git commit/push or terraform apply or helm upgrade without explicit approval
 - always run mypy when I modify Python files
-- PRs should always be associated with a Liner issue. the PR description should always be `ref <Linear issue number>`.
+- PRs should always be associated with a Linear issue. the PR description should always be `ref <Linear issue number>`.
   for example, `ref AI2-826`
 ```
 
-It is common for project CLAUDE.md to provide dev workflow commands and architecture guide. Here is a fictional project
-CLAUDE.md file:
+It is common for project **CLAUDE.md** to provide dev workflow commands and architecture guide. Here is a fictional
+project
+**CLAUDE.md** file:
 
 ```markdown
 # The App Project
@@ -96,10 +108,11 @@ Web application using React + FastAPI.
 ```
 
 Note the personal preferences import in the last line. When you specify files with @ they will always be included in the
-context. This pattern of mentioning a personal CLAUDE.md file for a specific project lets instruct Claude Code how to
+context. This pattern of mentioning a personal **CLAUDE.md** file for a specific project lets instruct Claude Code how
+to
 behave to match your style on a project by project level (in addition to the global ~/.claude/CLAUDE.md).
 
-Here is an example of local CLAUDE.md for `the-app` project:
+Here is an example of local **CLAUDE.md** for `the-app` project:
 **~/.claude/projects/the-app/CLAUDE.md** (personal):
 
 ```markdown
@@ -110,18 +123,19 @@ Here is an example of local CLAUDE.md for `the-app` project:
 - Deploy to staging with approval
 ```
 
-### The Import System
+### 📥 The Import System 📥
 
 Ok. Let's talk a little bit more about the import system. Remember that `@` symbol? It lets you pull in other files (not
 just other ClAUDE.md files) into the context. This is super useful for keeping personal settings outside the repo while
-still having them available and also lets you organize your CLAUDE.md into multiple files if you wish. For example, your
-CLAUDE.md file can be just a list of imports like so:
+still having them available and also lets you organize your **CLAUDE.md** into multiple files if you wish. For example,
+your
+**CLAUDE.md** file can be just a list of imports like so:
 
 ```markdown
 @docs/architecture.md
 @docs/testing.md
 @docs/guardrails.md
-@docs/forgbidden.md
+@docs/forbidden.md
 ```
 
 The old way was to use `CLAUDE.local.md` files (which are .gitignored automatically), but there's a catch - git
@@ -148,14 +162,15 @@ automatically into the context. Claude can decide to read this file and pull it 
 current task sensitive enough.
 
 Note, the recommended way for this kind of dynamic pulling into the context is putting it into a skill, which we will
-discuss in a future blog. But, just referencing files without import in CLAUDE.md works too.
+discuss in a future blog. But, just referencing files without import in **CLAUDE.md** works too.
 
 ## 📚 Modular Rules with `.claude/rules/` 📚
 
 For larger projects, you can organize instructions into multiple focused files instead of cramming everything into one
-CLAUDE.md. This is great because by virtue of putting a lot of files under a rules directly they will be automatically included as opposed to explicitly importing them with @.
+**CLAUDE.md**. This is great because by virtue of putting a lot of files under a rules directly they will be
+automatically included as opposed to explicitly importing them with @.
 
-### Basic Structure
+### 🏗️ Basic Structure 🏗️
 
 ```
 the-project/
@@ -181,7 +196,7 @@ also create subdirectories to organize rules by topic:
 └── general.md
 ```
 
-### Path-Specific Rules
+### 🎯 Path-Specific Rules 🎯
 
 Here's where it gets really powerful. You can scope rules to specific files using YAML frontmatter with a `paths` field:
 
@@ -201,16 +216,14 @@ paths:
 This rule only applies when Claude is working on files matching `src/api/**/*.ts`. Rules without a `paths` field apply
 to all files unconditionally.
 
-### Glob Patterns
+### 🔍 Glob Patterns 🔍
 
 The `paths` field supports standard glob patterns:
 
-| Pattern | Matches |
-|---|---|
-| `**/*.ts` | All TypeScript files in any directory |
-| `src/**/*` | All files under `src/` directory |
-| `*.md` | Markdown files in project root only |
-| `src/components/*.tsx` | React components in specific directory |
+- `**/*.ts` — All TypeScript files in any directory
+- `src/**/*` — All files under `src/` directory
+- `*.md` — Markdown files in project root only
+- `src/components/*.tsx` — React components in specific directory
 
 You can also use multiple patterns and brace expansion:
 
@@ -223,7 +236,7 @@ paths:
 ---
 ```
 
-### User-Level Rules
+### 👤 User-Level Rules 👤
 
 You can also create personal rules that apply to all your projects:
 
@@ -239,64 +252,134 @@ User-level rules are loaded before project rules, so project rules take preceden
 
 A couple of slash commands make working with memory files easier:
 
-**`/init`** - Bootstrap a CLAUDE.md for your project. Claude analyzes your project structure and tech stack to generate
+**`/init`** - Bootstrap a **CLAUDE.md** for your project. Claude analyzes your project structure and tech stack to
+generate
 a starter file. Great for new projects!
 
 **`/memory`** - Opens your memory files in your system editor. Use this for on-the-fly edits during a session
 
-## Putting it all together
+## 🧩 Putting It All Together 🧩
 
-Alright, let's claudify the [Gigi Zone](https://github.com/the-gigi/gigi-zone), which is the repo where I write my blogs. 
+Alright, let's claudify the [Gigi Zone](https://github.com/the-gigi/gigi-zone), which is the repo where I write my
+blogs.
 
 ![](images/claudify-gigi-zone.png)
 
-Alright Claude churned (his words not mine) for less than two minutes  and replied with the following:
+Cool! Claude churned (his words not mine) for less than two minutes and came back with the following:
 
 ![](images/init.png)
 
-Check it out here if you're curious:
+Check out
+the [generated CLAUDE.md](https://github.com/the-gigi/gigi-zone/blob/371c8e85db0010f7dfb8640cccf31f7d79ad436b/CLAUDE.md)
+if you're curious.
 
+I made a few small changes, but overall it gets the job done.
 
+I plan to customize it a little further and add a couple of slash commands and possibly a hook, but not today.
 
+Let's see how many tokens it takes. Ha! insignificant.
 
+```
+Memory files · /memory
+  └ ~/.claude/CLAUDE.md: 239 tokens
+  └ CLAUDE.md: 388 tokens
+```
 
+## 📄 The Other Markdown Files 📄
 
+**CLAUDE.md** is awesome, but there are a couple of other Markdown files that may overlap or even fully duplicate its
+content. I'm talking specifically about **README.md** and **AGENTS.md**.
 
+### 📖 README.md 📖
 
-## ✅ Best Practices ✅
+**README.md** is for human users - project overview, installation, usage, etc. Some content is relevant for Claude Code,
+but not all of it (like "follow me on LinkedIn" requests).
 
-From the official docs and my own experience:
+You may also want to give Claude different instructions or background than humans get.
 
-1. **Be specific:** "Use 2-space indentation" beats "Format code properly"
-2. **Use structure:** Format each memory as bullet points under descriptive markdown headings
-3. **Review periodically:** Update memories as your project evolves
-4. **Keep rules focused:** Each file in `.claude/rules/` should cover one topic
-5. **Use descriptive filenames:** The filename should indicate what the rules cover
-6. **Use conditional rules sparingly:** Only add `paths` frontmatter when rules truly apply to specific file types
-7. **Keep it concise:** Every token in CLAUDE.md eats into your context window
+### 🤖 AGENTS.md 🤖
+
+[AGENTS.md](https://agents.md) is an emerging standard from the [Agentic AI Foundation](https://aaif.io) (a Linux
+Foundation project). It's the equivalent of **CLAUDE.md** for other AI coding agents like OpenAI Codex, Amp, and Gemini
+CLI.
+
+**AGENTS.md** supports nested files in subdirectories, but lacks **CLAUDE.md** features like `@` imports, rules
+directories, and personal overrides.
+
+I hope the **AGENTS.md** spec will evolve to support these features. Then Claude Code can just adopt it and we'll have
+one standard file for all AI agents.
+
+### 🤝 Reconciliation Options 🤝
+
+So, let's look at some approaches for managing all these files and possibly sharing some content.
+
+**Import**
+- **README.md**: `@README.md` in CLAUDE.md (adds some irrelevant context)
+- **AGENTS.md**: `@AGENTS.md` in CLAUDE.md (can add Claude-specific imports too)
+
+**Symlink**
+- **README.md**: README.md → CLAUDE.md (design for both audiences)
+- **AGENTS.md**: CLAUDE.md → AGENTS.md (lose rules/imports features)
+
+**Separate files**
+- Keep them separate and accept some duplication. Let Claude help maintain both.
+
+There are pros and cons to each approach and I don't have a strong opinion on which one is best. You'll have to figure it out for your use case, environment, and culture.
+
+## 🏢 Managing Project-Level CLAUDE.md Files in a Monorepo 🏢
+
+Here is the situation, you have multiple teams working on different projects in the same monorepo. Your project -
+`awesome-project` - is spread across multiple directories in the monorepo - backend, frontend, infra, etc. You want
+Claude Code to be aware of the all the components of your project. you don't want to clutter the root of the repo with
+the awesome-project specific instructions and context. One way to accomplish it is by having a **CLAUDE.md** file in
+each of the awesome-project subdirectories. In order to avoid duplication, you can manage just one such file and create
+symlinks in the other subdirectories. Here is what it looks like:
+
+```
+root/
+├── backend/
+│   └── awesome-project/
+│       ├── CLAUDE.md
+│       ├── src/
+│       └── test/
+├── frontend/
+│   └── awesome-project/
+│       ├── CLAUDE.md
+│       ├── src/
+│       └── test/
+└── infra/
+    └── awesome-project/
+        ├── CLAUDE.md
+        ├── src/
+        └── test/
+```
+
+In a future blog we'll look into [Claude Code plugins](https://code.claude.com/docs/en/plugins), which provide a more
+complete and elegant solution to the same problem.
 
 ## ⏭️ What's Next ⏭️
 
-We've covered the basics, slash commands, and now the memory system. The CCDD series will continue with more advanced
-topics:
+So far, we've covered the basics, slash commands, and now the memory system works. The CCDD series will continue with
+more advanced topics:
 
-- MCP support
 - Skills
+- MCP support
 - Subagents
 - Hooks
 - Plugins
 - Beyond the terminal
+- Managing multiple Claude Code sessions in parallel
 - Comparison with other AI coding agents
 
 ## 🏠 Take Home Points 🏠
 
-- CLAUDE.md files are persistent memory loaded every session
+- **CLAUDE.md** files are persistent memory loaded every session
 - Memory hierarchy: enterprise → project → project rules → user → user rules → local
 - Use `.claude/rules/` for modular, topic-specific instructions
 - Path-specific rules with YAML frontmatter let you scope instructions to specific files
 - Imports (`@`) are better than `.local.md` files for worktree compatibility
 - Keep it concise - every token counts
 - Use `/init` to bootstrap and `/memory` to edit
-- Maintain your CLAUDE.md files like you maintain your code
+- Maintain your **CLAUDE.md** files like you maintain your code
 
 🇦🇺 Hooroo, mates! 🇦🇺
