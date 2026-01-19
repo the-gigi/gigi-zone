@@ -8,7 +8,7 @@ This is the second article in the *CCDD* (Claude Code Deep Dive) series. If you 
 out [Claude Code Deep Dive - Basics](/posts/2026/01/cc-deep-dive-01-basics/) where I covered getting started,
 permissions, sessions and running Claude Code in the terminal and IDE.
 
-Today we're diving into slash commands - the built-in ones and how to create your own custom commands.
+Today we're diving into slash commands. We'll cover both the built-in ones and how to create your own custom commands.
 
 **"Automation is not about replacing humans, it's about amplifying them." ~ Satya Nadella**
 
