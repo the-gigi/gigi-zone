@@ -285,7 +285,7 @@ The nginx deployment is now fixed and operational. If you need further assistanc
 ## 🫣 Looking behind the curtain 🫣
 
 That was pretty impressive. right? How does this Kubernetes "agent" work? Check
-out [k8s-ai](https://github.com/the-gigi/k8s-ai/blob/main/main.py). It is a complete AI framework including a text
+out [k8s-ai](https://github.com/the-gigi/k8s-ai/tree/v1.0.0). It is a complete AI framework including a text
 chat interface and a full-fledged Kubernetes AI "agent" that can diagnose and fix any problem in your cluster and let
 you interact with your cluster in natural language. The whole thing is 60 lines of Python.
 

@@ -2,7 +2,8 @@
 
 ## 2037
 
-Comedy club where AI standup comedian is making fun of humans worrying about C timestamp wrapping around when AI agents translated all C code to Rust in March 2027 and by May 2027 replaced all operating systems with new ΩS (Omega System).  
+Comedy club where AI standup comedian is making fun of humans worrying about C timestamp wrapping around when AI agents
+translated all C code to Rust in March 2027 and by May 2027 replaced all operating systems with new ΩS (Omega System).
 
 ## AI Agents are people (at the moment)
 
