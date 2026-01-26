@@ -5,7 +5,7 @@ categories = ["Claude", "ClaudeCode", "AICoding", "AIAgent", "CodingAssistant"]
 +++
 
 This is the second article in the *CCDD* (Claude Code Deep Dive) series. If you haven't read the first one, check
-out [Claude Code Deep Dive - Basics](/posts/2026/01/cc-deep-dive-01-basics/) where I covered getting started,
+out [Claude Code Deep Dive - Basics](https://medium.com/@the.gigi/claude-code-deep-dive-basics-ca4a48003b02) where I covered getting started,
 permissions, sessions and running Claude Code in the terminal and IDE.
 
 Today we're diving into slash commands. We'll cover both the built-in ones and how to create your own custom commands.

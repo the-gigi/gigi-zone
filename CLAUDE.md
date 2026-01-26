@@ -33,6 +33,39 @@ categories = ["Category1", "Category2"]
 - Use `<!--more-->` to mark the excerpt cutoff point
 - Categories should be existing ones when applicable (check recent posts for examples)
 
+## Writing Style Guide (Based on Existing Posts)
+
+### Voice and Tone
+- Conversational, first-person, confident; explain as a peer.
+- Mix technical rigor with light humor and occasional asides.
+- Use emoji sparingly but consistently in section headers.
+- Consider opening with a short quote or one-liner to set tone.
+
+### Structure and Flow
+- Start with a clear framing: problem, constraints, and why it matters.
+- Use many H2 sections to chunk the narrative.
+- Favor a problem -> options -> decision -> steps -> recap arc.
+- End with a recap or take-home points section.
+
+### Technical Depth
+- Be practical and step-by-step; include tradeoffs and failure modes.
+- Use concrete examples, commands, and config snippets.
+- Prefer diagrams/screenshots for architecture, workflows, and results.
+
+### Formatting Conventions
+- Include `<!--more-->` after the hook/intro.
+- Use image assets under the post's `images/` folder.
+- Keep headings short; emoji-wrapped headers are a house style.
+
+### Content Cadence Patterns
+- Long-form deep dives are common (1.5k+ words).
+- Series are encouraged (multi-part explorations of a theme).
+
+### Reference Examples
+- Blue/Green Upgrade for Postgres on AWS RDS (tone + diagrams + recap)
+- The Art and Science of Kubernetes Bin Packing (depth + visuals)
+- Auto Web Login (Parts I-IV) (series structure + step-by-step)
+
 ## Deployment
 
 - Automatic on push to `main` branch via GitHub Actions
