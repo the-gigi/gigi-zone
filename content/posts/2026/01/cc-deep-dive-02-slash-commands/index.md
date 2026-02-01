@@ -57,7 +57,7 @@ for your actual conversation.
 
 **MCP Tools**: Here's where it gets interesting. I have three MCP servers (Linear, Notion, Datadog) that consume almost
 32k tokens (15.9%). Each MCP server exposes multiple tools. For example Linear has 25 tools and Notion has 14 tools.
-Let's look at some of Notion tools:
+Let's look at some of the Notion tools:
 
 ```
      └ mcp__notion__notion-create-database: 5.8k tokens
