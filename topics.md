@@ -149,6 +149,52 @@ Fuzz-emoji in Kubernetes
 - https://cloud.google.com/free/docs/free-cloud-features#free-tier
 -
 
+## Bazel Cache Cleanup for Git Worktrees
+
+TIL: git worktrees take up a LOT of disk space in bazel cache. Each worktree gets its own workspace cache, and these can
+accumulate when worktrees are deleted without cleaning up the cache.
+
+### Checking Bazel Cache
+
+```bash
+# List all bazel workspace caches and their source paths
+for dir in /private/var/tmp/_bazel_gigi/*/; do
+  if [[ -f "${dir}DO_NOT_BUILD_HERE" ]]; then
+    workspace=$(head -1 "${dir}DO_NOT_BUILD_HERE" 2>/dev/null)
+    size=$(du -sh "$dir" 2>/dev/null | cut -f1)
+    echo "$size: $workspace"
+  fi
+done
+```
+
+### Identifying Orphan Caches
+
+Orphan caches are workspace caches where the original directory no longer exists:
+
+```bash
+# Find orphaned bazel workspace caches
+for dir in /private/var/tmp/_bazel_gigi/*/; do
+  if [[ -f "${dir}DO_NOT_BUILD_HERE" ]]; then
+    workspace=$(head -1 "${dir}DO_NOT_BUILD_HERE" 2>/dev/null)
+    if [[ ! -d "$workspace" ]]; then
+      size=$(du -sh "$dir" 2>/dev/null | cut -f1)
+      echo "ORPHAN ($size): $workspace -> $dir"
+    fi
+  fi
+done
+```
+
+### Cleanup Strategy
+
+1. `delete-worktree` script + `/delete-worktree` Claude command
+   - Deletes the git worktree
+   - Deletes the branch
+   - Cleans up the associated bazel workspace cache
+
+2. Periodic cleanup of orphaned caches
+   - Run the orphan detection script periodically
+   - Safe to delete - no rebuild cost for deleted worktrees
+
 ## Python f-strings
 
 Explore the recent innovations like comments, str(), repr() and ascii() and async
