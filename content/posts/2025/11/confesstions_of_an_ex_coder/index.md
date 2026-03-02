@@ -26,23 +26,23 @@ Claude Code lives in your terminal 💻. It changes your code directly, and it c
 
 If I want to change something manually, I just do it ✏️. No need to keep pulling from a remote branch somewhere.
 
-The most important benefit for me is that Claude code can access any command-line tool I have installed 🔧. It can help me with infra tasks on Kubernetes ☸️, AWS ☁️ and access any system I can.
+The most important benefit for me is that Claude Code can access any command-line tool I have installed 🔧. It can help me with infra tasks on Kubernetes ☸️, AWS ☁️ and access any system I can.
 
 These days I don't write code myself, I don't troubleshoot myself, I don't even design myself. I provide a spark to Claude ⚡ and I keep it on track 🎯. I gently nudge it when it goes off the rails 🛤️.
 
 ## 🎮  Get in the game 🎮 
 
-If you're not using an AI coding agent yet, you're already behind ⚠️. You better catch up quick 🏃. You don't have to use Claude code, but you have to use something. Pick your poison ☠️: Claude code, OpenAI codex, Gemini CLI, Devin or something else.
+If you're not using an AI coding agent yet, you're already behind ⚠️. You better catch up quick 🏃. You don't have to use Claude Code, but you have to use something. Pick your poison ☠️: Claude Code, OpenAI codex, Gemini CLI, Devin or something else.
 
 If you're in AI coding assistant camp, Cursor, Windsurf or Google's Antigravity may be your jam 🎸.
 
-OK. Let's take a quick look at Claude code and what it can do for you 👀.
+OK. Let's take a quick look at Claude Code and what it can do for you 👀.
 
 ## 🟧 Claude Code World 🟧
 
-This is going to be just a quick overview of Claude code features ⚡. In future blogs I'll dive in deeper into each feature and cover it in depth 🔍.
+This is going to be just a quick overview of Claude Code features ⚡. In future blogs I'll dive in deeper into each feature and cover it in depth 🔍.
 
-Claude code has several key features that make it stand out ⭐:
+Claude Code has several key features that make it stand out ⭐:
 
 - Memory system: CLAUDE.md files that provide persistent context across sessions.
 - Slash commands: Powerful slash commands to control its behavior, and you can write custom slash commands.
@@ -56,13 +56,13 @@ Claude code has several key features that make it stand out ⭐:
 
 ## 👤 Next Steps for Me 👤
 
-I plan to double down on Claude code 💪. I want to integrate via CLI tools or MCP servers with ALL the systems I use 🔗. I want to run multiple sessions in parallel 🎛️, get notified whenever Claude needs my input 📬 and provide the final thumbs up 👍. I want to take advantage of all the advanced features like hooks 🪝 and plugins 🧩 to automate as much as possible 🤖.
+I plan to double down on Claude Code 💪. I want to integrate via CLI tools or MCP servers with ALL the systems I use 🔗. I want to run multiple sessions in parallel 🎛️, get notified whenever Claude needs my input 📬 and provide the final thumbs up 👍. I want to take advantage of all the advanced features like hooks 🪝 and plugins 🧩 to automate as much as possible 🤖.
 
 ## 🏠 Take Home Points 🏠
 
 - 🤖 Coding has been automated (even if it's not 100% yet, the models improve fast)
 - 🚀 AI coding agents are the new normal
-- 💻 Claude code is a powerful AI coding agent that runs in your terminal
+- 💻 Claude Code is a powerful AI coding agent that runs in your terminal
 - ✨ Embrace the change and start using an AI coding agent today!
 
 Until next time, happy coding (or Clauding) 👨‍💻!
