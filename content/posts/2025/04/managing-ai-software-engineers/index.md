@@ -13,7 +13,7 @@ mistakes!” ~ Steven Magee**
 
 <!--more-->
 
-![](images/hero.jpg)
+![](images/hero.png)
 
 Yes, you guessed it. I am managing a team of AI software engineers 🤯.
 

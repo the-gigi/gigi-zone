@@ -13,7 +13,7 @@ code 💻, collaboration 🤝, and the quest for robust interoperability 🔧 in
 
 <!--more-->
 
-![](../gemini-support-in-simple-openai/images/hero.png)
+![](images/hero.png)
 
 At [Invisible Platforms](https://www.getinvisisble.com) we use all the top-level LLM models. This is a very dynamic list
 and the leaders keep changing. We are a Java shop (Yes! Java can do AI. thanks for asking), and we
@@ -140,18 +140,18 @@ The OpenAI API defines precisely the expected type of the message content field 
 the [Chat completion object](https://platform.openai.com/docs/api-reference/chat/object) (the response from the LLM).
 This field must be either a string or null.
 
-![](../gemini-support-in-simple-openai/images/message_content_type.png)
+![](images/message_content_type.png)
 
 Well, guess what? The Gemini Vertex OpenAI compatibility layer has other ideas and sometimes returns an array of objects
 instead of just a string or null.
 
-![](../gemini-support-in-simple-openai/images/gemini_message_content_bug.png)
+![](images/gemini_message_content_bug.png)
 
 Now, this is a major problem because simple-openai deserializes the response into
 a [ResponseMessage](https://github.com/sashirestela/simple-openai/blob/main/src/main/java/io/github/sashirestela/openai/domain/chat/ChatMessage.java#L212)
 Java object that uses a nullable string, so the library relly expects the `content` field to be a string or null.
 
-![](../gemini-support-in-simple-openai/images/simple-openai-chat-message.png)
+![](images/simple-openai-chat-message.png)
 
 So, we can't just ignore it. We need to fix it.
 

@@ -12,7 +12,7 @@ become a reality! Enter Cyclone🌀 - a little Rust program I built to make the 
 
 <!--more-->
 
-![](attack-of-the-clones.jpg)
+![](images/hero.png)
 
 # But, Why? 🤷
 

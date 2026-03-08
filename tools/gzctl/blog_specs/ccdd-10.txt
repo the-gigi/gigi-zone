@@ -1,0 +1,19 @@
+CCDD #10. Slug: cc-deep-dive-10-sdk-strikes-back.
+
+The article covers programmatic access to Claude Code through the Agent SDK.
+
+Key content points:
+
+1. Three tiers of access: Agent SDK (full Claude Code as a library, inherits CLAUDE.md/hooks/MCP/skills), Anthropic Client SDK (raw API, build everything yourself), and provider-agnostic frameworks for multi-provider setups. Both Anthropic SDKs are Anthropic-only.
+
+2. For multi-provider, mention ai-six (https://github.com/Sayfan-AI/ai-six) and plug the book Design Multi-Agent AI Systems Using MCP and A2A by Gigi Sayfan (https://www.amazon.com/Design-Multi-Agent-Systems-Using-MCP/dp/1806116472). Include book cover: ![](images/book-cover.png)
+
+3. One paragraph comparing to claude -p from CCDD #9.
+
+4. Real example: gzctl (tools/gzctl/gzctl.py in this repo). Read the actual source and walk through it. Two commands: draft (Agent SDK + config surface) and publish (Agent SDK + custom MCP tool wrapping Medium API via create_sdk_mcp_server). This very article was drafted using gzctl. AI ouroboros.
+
+5. Brief section on SDK extras: hooks, streaming, sessions.
+
+Diagram placeholders: ![](images/diagram-three-tiers.png), ![](images/diagram-gzctl-workflow.png), ![](images/diagram-hooks.png)
+
+Keep under 2800 words. Icelandic closing greeting.

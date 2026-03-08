@@ -11,7 +11,7 @@ the case 🎉...
 
 <!--more-->
 
-![](yawn-upgrade.png)
+![](images/hero.png)
 
 ## 🌅 Present day - California 🌅
 

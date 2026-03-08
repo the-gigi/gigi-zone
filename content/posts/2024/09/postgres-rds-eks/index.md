@@ -12,7 +12,7 @@ Keep reading to find out...
 
 <!--more-->
 
-![](postgres-rds-eks.png)
+![](images/hero.png)
 
 # Prior Art 🎨
 

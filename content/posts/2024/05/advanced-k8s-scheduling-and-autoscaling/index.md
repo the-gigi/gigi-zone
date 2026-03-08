@@ -23,7 +23,7 @@ component) to find a node for it.
 Here is what it looks like in the super simple case, where there is a node available with sufficient
 resources to accommodate the new pod:
 
-![](simple-schedule.png)
+![](images/hero.png)
 
 Now, the scheduler can't just assign the node into any old node. There are a bunch of factors it takes
 into account: resource requests (cpu, memory, ephemeral storage), node affinity and anti-affinity,

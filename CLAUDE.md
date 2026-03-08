@@ -64,6 +64,7 @@ The Claude Code Deep Dive (CCDD) series follows a consistent structure:
 - Include `<!--more-->` after the hook/intro.
 - Use image assets under the post's `images/` folder.
 - Keep headings short; emoji-wrapped headers are a house style.
+- Never use markdown tables. They don't render properly on Medium. Use prose, lists, or side-by-side code blocks instead.
 
 ### Content Cadence Patterns
 - Long-form deep dives are common (1.5k+ words).
