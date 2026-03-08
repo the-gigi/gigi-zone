@@ -15,7 +15,7 @@ node group.
 
 This is what it looks like:
 
-![](just-shared.png)
+![](images/hero.png)
 
 ## Dedication is Next to Godliness 🙏
 

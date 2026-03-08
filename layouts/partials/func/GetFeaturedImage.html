@@ -1,0 +1,30 @@
+{{/*
+	GetFeaturedImage (override)
+
+	Priority:
+	1. featured_image from front matter
+	2. Page resource matching "hero"
+	3. Page resource matching "feature" or "cover" (Ananke default fallback)
+*/}}
+
+{{ $linkToCover := "" }}
+
+{{ with .Params.featured_image }}
+  {{ $linkToCover = trim . "/" | absURL }}
+  {{ with $.Resources.GetMatch . }}
+    {{ $linkToCover = .RelPermalink }}
+  {{ end }}
+{{ else }}
+  {{ with .Resources.ByType "image" }}
+    {{ with .GetMatch "**hero*" }}
+      {{ $linkToCover = .RelPermalink }}
+    {{ end }}
+    {{ if not $linkToCover }}
+      {{ with .GetMatch "**{feature,cover}*" }}
+        {{ $linkToCover = .RelPermalink }}
+      {{ end }}
+    {{ end }}
+  {{ end }}
+{{ end }}
+
+{{ return $linkToCover }}
