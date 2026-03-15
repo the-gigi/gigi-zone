@@ -110,6 +110,10 @@ When config files shine.
 
 https://www.docker.com/blog/docker-best-practices-choosing-between-run-cmd-and-entrypoint
 
+## direnv - Per-Directory Environment Magic
+
+Automatically configure your shell environment when entering a directory. Examples: switching gh accounts per repo (`GH_TOKEN`), activating Python venvs, setting cloud project/region, loading secrets, configuring tool versions. How .envrc works, security model (allowlisting), integration with shell and editors.
+
 ## AppleScript vs. JXA
 
 ## Prompt Engineering (the old kind)

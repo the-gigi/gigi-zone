@@ -9,6 +9,7 @@ import asyncio
 import json
 import os
 import re
+import subprocess
 from datetime import date
 from pathlib import Path
 
@@ -453,6 +454,128 @@ The content is loaded automatically by the tool from a temp file. Do NOT pass co
 
     content_file.unlink(missing_ok=True)
     return result
+
+
+def _fetch_medium_stats() -> str:
+    """Fetch Medium stats page content via Safari (requires logged-in session)."""
+    script = '''
+    tell application "Safari"
+        if (count of windows) = 0 then
+            make new document
+        end if
+        set newTab to make new tab at end of tabs of front window with properties {URL:"https://medium.com/me/stats"}
+        set current tab of front window to newTab
+        delay 8
+        set pageText to do JavaScript "document.body.innerText" in newTab
+        close newTab
+        return pageText
+    end tell
+    '''
+    result = subprocess.run(
+        ["osascript", "-e", script],
+        capture_output=True, text=True, timeout=30,
+    )
+    if result.returncode != 0:
+        raise click.ClickException(
+            f"Failed to fetch Medium stats: {result.stderr.strip()}"
+        )
+    return result.stdout
+
+
+def _parse_medium_stats(raw: str) -> list[dict]:
+    """Parse the raw text from Medium stats page into structured data."""
+    lines = [line.strip() for line in raw.strip().splitlines() if line.strip()]
+
+    # Find the story stats section (after "Story\tPresentations" header area)
+    stories = []
+    i = 0
+    while i < len(lines):
+        # Look for lines that match a story title pattern followed by stats
+        # Stories have: title, "·", "N min read", "·", date, "·", "View story",
+        # then numbers (presentations, views, reads)
+        if "min read" in lines[i] if i < len(lines) else False:
+            # Back up to find the title (first non-metadata line before this)
+            title_idx = i - 1
+            while title_idx >= 0 and lines[title_idx] == "·":
+                title_idx -= 1
+            if title_idx < 0:
+                i += 1
+                continue
+
+            title = lines[title_idx]
+
+            # Scan forward past metadata to find the numbers
+            j = i + 1
+            while j < len(lines) and (lines[j] == "·" or "View story" in lines[j]
+                                       or "2026" in lines[j] or "2025" in lines[j]
+                                       or "2024" in lines[j]):
+                j += 1
+
+            # Collect numeric values
+            nums = []
+            while j < len(lines) and len(nums) < 3:
+                val = lines[j].replace(",", "").replace("$", "")
+                # Handle K notation (e.g., "5.1K")
+                if val.upper().endswith("K"):
+                    try:
+                        nums.append(int(float(val[:-1]) * 1000))
+                        j += 1
+                        continue
+                    except ValueError:
+                        break
+                try:
+                    nums.append(int(float(val)))
+                    j += 1
+                except ValueError:
+                    break
+
+            if len(nums) >= 3:
+                story = {
+                    "title": title,
+                    "presentations": nums[0],
+                    "views": nums[1],
+                    "reads": nums[2],
+                }
+                stories.append(story)
+
+            i = j
+        else:
+            i += 1
+
+    return stories
+
+
+@cli.command()
+@click.option("--json-output", "-j", is_flag=True, help="Output as JSON")
+@click.argument("title_filter", required=False)
+def stats(json_output: bool, title_filter: str | None):
+    """Fetch Medium story stats via Safari.
+
+    Requires: Safari with 'Allow JavaScript from Apple Events' enabled
+    and an active Medium login session.
+
+    Optionally filter by TITLE_FILTER (case-insensitive substring match).
+    """
+    click.echo("Fetching Medium stats...", err=True)
+    raw = _fetch_medium_stats()
+    stories = _parse_medium_stats(raw)
+
+    if not stories:
+        raise click.ClickException("No story stats found. Are you logged in to Medium in Safari?")
+
+    if title_filter:
+        stories = [s for s in stories if title_filter.lower() in s["title"].lower()]
+
+    # Clean up zero-width spaces and collapse multiple spaces in titles
+    for s in stories:
+        s["title"] = re.sub(r"\s+", " ", s["title"].replace("\u200b", " ")).strip()
+
+    if json_output:
+        click.echo(json.dumps(stories, indent=2))
+    else:
+        for s in stories:
+            click.echo(f"{s['presentations']:>6} pres  {s['views']:>6} views  "
+                       f"{s['reads']:>5} reads  {s['title']}")
 
 
 if __name__ == "__main__":
