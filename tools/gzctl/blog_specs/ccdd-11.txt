@@ -1,0 +1,21 @@
+CCDD #11. Slug: cc-deep-dive-11-on-the-clock.
+
+The article covers recurring tasks in Claude Code. The focus is on the Cron primitives (CronCreate, CronList, CronDelete) that power the scheduling system. /loop is the user-facing trigger, but rant a little about how "loop" is a terrible name for what is really a cron scheduler. Loops run continuously, these are periodic tasks that fire on a schedule.
+
+Key content points:
+
+1. Recurring tasks in Claude Code. What they are, why they exist, how they differ from actual loops. Brief contrast with the Ralph Loop pattern (an agentic loop that runs until work is done, completely different concept, and ironically a much better fit for the name "loop").
+
+2. The Cron primitives. CronCreate is the workhorse: takes a 5-field cron expression (local timezone), a prompt, and an optional recurring flag (default true, false for one-shot reminders). CronList shows all active jobs. CronDelete cancels by ID. There is no CronUpdate: to modify a task you delete and recreate it. Walk through the full lifecycle: create, list, delete. Show the actual tool schemas.
+
+3. /loop as the user-facing entry point. It's a skill that parses natural language intervals and translates them to CronCreate calls. Three forms: leading interval (/loop 5m ...), trailing with "every" (/loop ... every 2 hours), default 10 minutes. Also supports one-shot reminders via natural language ("remind me at 3pm to push the release branch").
+
+4. Key constraints: session-scoped (dies when you exit), 3-day auto-expiry for recurring tasks, no catch-up if Claude is busy (queues once), max 50 tasks, 1-minute minimum granularity, jitter applied to avoid thundering herd. Disable with CLAUDE_CODE_DISABLE_CRON=1.
+
+5. Worked example: security report across GitHub repos. Build a scoped shell tool (tools/gh-dependabot-alerts.sh) that wraps `gh api` for Dependabot alerts. Key design point: don't expose full gh API to Claude, give it a dedicated narrow tool. Walk through the tool, the direnv trick for gh auth per directory, and the prerequisite (`gh auth refresh -h github.com -s admin:repo_hook` if Dependabot scope is missing). Then show /loop running the tool across repos periodically and compiling a report.
+
+6. Practical tips: when recurring tasks make sense (interactive polling, session monitoring) vs. when you want GitHub Actions or Claude Code Desktop for durable scheduling that survives restarts.
+
+Diagram placeholders: ![](images/diagram-cron-primitives.png), ![](images/diagram-security-workflow.png)
+
+Keep under 2500 words. Swahili closing greeting.

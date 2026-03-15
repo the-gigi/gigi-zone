@@ -1,8 +1,10 @@
 Draft a new blog post for The Gigi Zone.
 
+Arguments: `<title>` and either inline spec text or a path to a spec file.
+
 ## Steps
 
-1. Figure out what the user wants to write about from the conversation context. If the title, topic, or series installment number isn't clear, ask.
+1. Parse the title and spec from the arguments. If a file path is provided, read the spec from that file.
 
 2. Determine the correct slug for the post directory. Look at existing posts under `content/posts/` to detect naming patterns (e.g. series with numbered slugs like `cc-deep-dive-NN-slug`). Derive the slug from the title and any series conventions found.
 
@@ -26,9 +28,9 @@ Draft a new blog post for The Gigi Zone.
 Specs can be stored in `tools/gzctl/blog_specs/` for reference. If the user provides a spec file path, read it. Example spec format:
 
 ```
-CCDD #11. Slug: cc-deep-dive-11-loop-the-loop.
+CCDD #11. Slug: cc-deep-dive-11-on-the-clock.
 
-The article covers recurring tasks with /loop.
+The article covers recurring tasks in Claude Code.
 
 Key content points:
 1. What /loop does and why it exists

@@ -75,6 +75,10 @@ The Claude Code Deep Dive (CCDD) series follows a consistent structure:
 - The Art and Science of Kubernetes Bin Packing (depth + visuals)
 - Auto Web Login (Parts I-IV) (series structure + step-by-step)
 
+## Tools
+
+- `gzctl` lives at `tools/gzctl/gzctl.py`. Always run it with `uv run tools/gzctl/gzctl.py` (it uses PEP 723 inline dependencies).
+
 ## Deployment
 
 - Automatic on push to `main` branch via GitHub Actions
