@@ -7,7 +7,7 @@ translated all C code to Rust in March 2027 and by May 2027 replaced all operati
 
 ## AI Agents are people (at the moment)
 
-If you recall I clained not too long ago that AI agents are not real, so how come I recognize them as people. That
+If you recall I claimed not too long ago that AI agents are not real, so how come I recognize them as people. That
 appears to be the mother of all 180s. Unless... I believe that people are not real, which to a certain degree I am! But,
 there is another possibility which can reconcile all three claims:
 
@@ -215,3 +215,9 @@ Compare to other languages
 | **Rust**                  | `format!` macro                    | `format!("Hello, {}!", name);`       | `Hello, Gigi!` |
 | **Ruby**                  | String interpolation with `#{}`    | `"Hello, #{name}!"`                  | `Hello, Gigi!` |
 | **C#**                    | String interpolation with `$`      | `$"Hello, {name}!"`                  | `Hello, Gigi!` |
+
+
+## AI Agents in the Docker ecosystem
+
+https://www.docker.com/blog/run-claude-code-with-docker/?utm_source=tldrdevops
+
