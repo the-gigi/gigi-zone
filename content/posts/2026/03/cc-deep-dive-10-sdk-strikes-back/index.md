@@ -104,7 +104,7 @@ The `async for` loop streams messages as they arrive. `AssistantMessage` contain
 
 The prompt itself instructs Claude to look at existing posts to infer naming conventions, read CLAUDE.md for the style guide, create the directory structure with an `images/` subdirectory, and write a complete post. Claude handles all the mechanics. The human provides the creative direction via the spec and then of going over it and making changes.
 
-I included the [spec](https://the-gigi.github.io/gigi-zone/tools/gzctl/blog_specs/ccdd-10.txt) for the blog draft itself in the repo, so you can check it out for yourself.
+I included the [spec](https://github.com/the-gigi/gigi-zone/blob/main/tools/gzctl/blog_specs/ccdd-10.txt) for the blog draft itself in the repo, so you can check it out for yourself.
 
 ![](images/blog-spec.png)
 

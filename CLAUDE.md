@@ -45,6 +45,7 @@ categories = ["Category1", "Category2"]
 - Start with a clear framing: problem, constraints, and why it matters.
 - Use many H2 sections to chunk the narrative.
 - Favor a problem -> options -> decision -> steps -> recap arc.
+- Break up long walls of text with diagrams. When a diagram ends a subsection, add a lead-in sentence transitioning to the next subsection so the reader isn't dropped cold into a new heading.
 
 ### CCDD Series Structure
 The Claude Code Deep Dive (CCDD) series follows a consistent structure:
