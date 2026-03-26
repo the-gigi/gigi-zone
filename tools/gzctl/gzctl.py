@@ -1,6 +1,6 @@
 # /// script
 # requires-python = ">=3.12"
-# dependencies = ["claude-agent-sdk", "click", "python-dotenv", "medium"]
+# dependencies = ["claude-agent-sdk", "click", "python-dotenv", "medium", "requests"]
 # ///
 
 """gzctl - CLI tool for managing the Gigi Zone blog."""
@@ -12,8 +12,10 @@ import re
 import subprocess
 from datetime import date
 from pathlib import Path
+from urllib.parse import urlparse
 
 import click
+import requests
 from dotenv import load_dotenv
 from medium import Client as MediumClient
 
@@ -194,6 +196,192 @@ Follow the writing style guide and content structure from the project's CLAUDE.m
                 click.echo("\nDraft created successfully!")
 
 
+def _check_front_matter(content: str) -> list[str]:
+    """Validate TOML front matter has required fields and no draft flag."""
+    errors = []
+    match = re.match(r"\+\+\+\n(.*?)\n\+\+\+\n", content, re.DOTALL)
+    if not match:
+        errors.append("FATAL: Could not parse TOML front matter (+++ delimiters)")
+        return errors
+
+    fm = match.group(1)
+    if not re.search(r"title\s*=", fm):
+        errors.append("FATAL: Missing 'title' in front matter")
+    if not re.search(r"date\s*=", fm):
+        errors.append("FATAL: Missing 'date' in front matter")
+    if not re.search(r"categories\s*=", fm):
+        errors.append("WARN: Missing 'categories' in front matter")
+    if re.search(r"draft\s*=\s*true", fm, re.IGNORECASE):
+        errors.append("WARN: Post is marked as draft")
+    return errors
+
+
+def _check_excerpt_marker(content: str) -> list[str]:
+    """Check that <!--more--> exists for excerpt cutoff."""
+    if "<!--more-->" not in content:
+        return ["WARN: Missing <!--more--> excerpt marker"]
+    return []
+
+
+def _check_images(content: str, post_dir: Path) -> list[str]:
+    """Check all image references resolve to existing files."""
+    errors = []
+    for m in re.finditer(r"!\[[^\]]*\]\(([^)]+)\)", content):
+        img_path = m.group(1)
+        # Skip absolute URLs
+        if img_path.startswith("http://") or img_path.startswith("https://"):
+            continue
+        full_path = post_dir / img_path
+        if not full_path.exists():
+            errors.append(f"FATAL: Image not found: {img_path}")
+    return errors
+
+
+def _check_external_links(content: str) -> list[str]:
+    """Check all external links are reachable. Uses Safari for Medium, HTTP HEAD for others."""
+    errors = []
+
+    # Extract all markdown links (not images)
+    links = set()
+    for m in re.finditer(r"(?<!!)\[[^\]]*\]\((https?://[^)]+)\)", content):
+        links.add(m.group(1))
+
+    if not links:
+        return errors
+
+    medium_links = [u for u in links if "medium.com" in urlparse(u).netloc]
+    other_links = [u for u in links if "medium.com" not in urlparse(u).netloc]
+
+    # Check non-Medium links with HTTP HEAD
+    for url in sorted(other_links):
+        try:
+            resp = requests.head(url, timeout=10, allow_redirects=True,
+                                 headers={"User-Agent": "Mozilla/5.0"})
+            if resp.status_code >= 400:
+                errors.append(f"FATAL: Link returned {resp.status_code}: {url}")
+        except requests.RequestException as e:
+            errors.append(f"FATAL: Link unreachable: {url} ({e})")
+
+    # Check Medium links via Safari (Medium blocks automated HTTP requests)
+    if medium_links:
+        errors.extend(_check_medium_links(medium_links))
+
+    return errors
+
+
+def _check_medium_links(urls: list[str]) -> list[str]:
+    """Verify Medium links via Safari. Returns errors for links that 404.
+
+    Opens all URLs in background tabs, waits for them to load, then checks
+    page titles. Medium 404s have distinctive titles like "Medium" or empty.
+    """
+    if not urls:
+        return []
+
+    errors = []
+
+    # Build AppleScript that opens all URLs in tabs, waits, reads titles, closes them
+    tab_opens = "\n".join(
+        f'        make new tab at end of tabs of front window with properties {{URL:"{url}"}}'
+        for url in sorted(urls)
+    )
+    script = f'''
+    tell application "Safari"
+        if (count of windows) = 0 then
+            make new document
+        end if
+        set originalTabCount to count of tabs of front window
+{tab_opens}
+        delay 8
+        set results to ""
+        set tabCount to count of tabs of front window
+        repeat with i from (originalTabCount + 1) to tabCount
+            set tabRef to tab i of front window
+            set pageTitle to name of tabRef
+            set results to results & pageTitle & linefeed
+        end repeat
+        -- close the tabs we opened (in reverse)
+        repeat with i from tabCount to (originalTabCount + 1) by -1
+            close tab i of front window
+        end repeat
+        return results
+    end tell
+    '''
+    try:
+        result = subprocess.run(
+            ["osascript", "-e", script],
+            capture_output=True, text=True, timeout=30 + len(urls) * 2,
+        )
+        if result.returncode != 0:
+            for url in sorted(urls):
+                errors.append(f"WARN: Could not verify Medium link: {url}")
+            return errors
+
+        titles = [t.strip() for t in result.stdout.strip().splitlines()]
+        sorted_urls = sorted(urls)
+        for i, url in enumerate(sorted_urls):
+            title = titles[i] if i < len(titles) else ""
+            if title in ("Medium", "Page not found", "") or "404" in title.lower():
+                errors.append(f"FATAL: Medium link appears broken (title={title!r}): {url}")
+    except subprocess.TimeoutExpired:
+        for url in sorted(urls):
+            errors.append(f"WARN: Timeout verifying Medium link: {url}")
+    except Exception as e:
+        for url in sorted(urls):
+            errors.append(f"WARN: Could not verify Medium link: {url} ({e})")
+
+    return errors
+
+
+def _run_checks(post_path: str, check_links: bool = True) -> list[str]:
+    """Run all pre-publish checks on a post. Returns list of error strings."""
+    post_dir = GIGI_ZONE_DIR / "content" / "posts" / post_path
+    index_file = post_dir / "index.md"
+
+    if not index_file.exists():
+        return [f"FATAL: Post not found: {index_file}"]
+
+    content = index_file.read_text()
+    errors = []
+    errors.extend(_check_front_matter(content))
+    errors.extend(_check_excerpt_marker(content))
+    errors.extend(_check_images(content, post_dir))
+    if check_links:
+        errors.extend(_check_external_links(content))
+    return errors
+
+
+@cli.command()
+@click.argument("post_path")
+@click.option("--skip-links", is_flag=True, help="Skip external link checking")
+def check(post_path: str, skip_links: bool):
+    """Run pre-publish checks on a post.
+
+    Validates front matter, excerpt marker, image references, and external links.
+
+    POST_PATH is relative to content/posts/.
+    For example: 2026/03/cc-deep-dive-12-lock-him-up
+    """
+    click.echo(f"Checking: {post_path}", err=True)
+    errors = _run_checks(post_path, check_links=not skip_links)
+
+    if not errors:
+        click.echo("All checks passed!")
+        return
+
+    fatals = [e for e in errors if e.startswith("FATAL")]
+    warns = [e for e in errors if e.startswith("WARN")]
+
+    for e in errors:
+        click.echo(e)
+
+    click.echo()
+    click.echo(f"{len(fatals)} error(s), {len(warns)} warning(s)")
+
+    if fatals:
+        raise SystemExit(1)
+
+
 @cli.command()
 @click.argument("post_path")
 def publish(post_path: str):
@@ -243,10 +431,13 @@ def publish(post_path: str):
 
 @cli.command("publish-py")
 @click.argument("post_path")
-def publish_py(post_path: str):
+@click.option("--skip-checks", is_flag=True, help="Skip pre-publish checks")
+@click.option("--skip-links", is_flag=True, help="Skip link checking (still runs other checks)")
+def publish_py(post_path: str, skip_checks: bool, skip_links: bool):
     """Publish a Hugo blog post to Medium using pure Python (no agent).
 
     Faster alternative that skips the Agent SDK entirely.
+    Runs pre-publish checks before publishing (use --skip-checks to bypass).
 
     POST_PATH is the path to the post's index.md file,
     relative to the gigi-zone content directory.
@@ -254,6 +445,21 @@ def publish_py(post_path: str):
     """
     click.echo(f"Publishing to Medium: {post_path}")
     click.echo()
+
+    if not skip_checks:
+        click.echo("Running pre-publish checks...", err=True)
+        errors = _run_checks(post_path, check_links=not skip_links)
+        fatals = [e for e in errors if e.startswith("FATAL")]
+        for e in errors:
+            click.echo(f"  {e}", err=True)
+        if fatals:
+            click.echo(f"\n{len(fatals)} fatal error(s) found. Fix them or use --skip-checks to bypass.", err=True)
+            raise SystemExit(1)
+        if errors:
+            click.echo(f"  {len(errors)} warning(s), proceeding...", err=True)
+        else:
+            click.echo("  All checks passed!", err=True)
+        click.echo()
 
     click.echo("Converting...", err=True)
     try:
