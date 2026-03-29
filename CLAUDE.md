@@ -49,7 +49,7 @@ categories = ["Category1", "Category2"]
 
 ### CCDD Series Structure
 The Claude Code Deep Dive (CCDD) series follows a consistent structure:
-1. Hook paragraph (2-4 sentences) + bolded quote + `<!--more-->` + hero image
+1. Hook paragraph (2-4 sentences, sprinkle 3-4 emoji naturally in the text) + bolded quote + `<!--more-->` + hero image
 2. Series index (numbered list linking all previous articles)
 3. Content sections with emoji-bookend H2 headers (`## 🔌 Title 🔌`)
 4. `## ⏭️ What's Next ⏭️` — bullet list of upcoming series topics

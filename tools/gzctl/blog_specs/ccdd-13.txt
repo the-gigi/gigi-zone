@@ -1,0 +1,103 @@
+Blog Spec: CCDD #13 - "Putting It All Together"
+
+Slug: cc-deep-dive-13-putting-it-all-together
+Date: 2026-03-28
+Categories: ["Claude", "ClaudeCode", "AICoding", "AIAgent", "CodingAssistant", "Configuration"]
+
+Hook (2-4 sentences)
+Over twelve articles we've explored Claude Code's features one by one: CLAUDE.md, slash commands, skills, MCP, subagents, hooks, plugins, pipelines, the SDK, scheduling, and sandboxing. Each one introduced its own configuration files, settings, and conventions. Today we zoom out and look at the full picture: every file, every directory, every setting, and how they all fit together.
+
+Bolded quote: TBD - something about configuration/customization/making tools your own
+
+Hero image: Infographic-style map of the full Claude Code configuration surface (inspired by the Chorouk Malmoum LinkedIn post). ~/.claude/ tree on one side, project .claude/ tree on the other, annotated with what each file/directory does. Color-coded by scope. Light beige background with orange accents, matching the Claude Code color scheme. Clean layout, monospace font for file paths.
+
+Series Index
+Numbered list of all 12 previous articles with Medium links.
+
+Section Plan
+-----------
+
+1. ## The Configuration Landscape
+Opening orientation. Three configuration zones: home directory (~/.claude/), project directory (.claude/ and root-level files), and managed/enterprise paths. Each zone has its own purpose and precedence. Quick prose overview, then a full annotated directory tree diagram.
+
+One sentence on enterprise/managed settings with a link to the official docs (https://docs.anthropic.com/en/docs/claude-code/settings). Not covered further.
+
+Diagram: The Three Zones - Visual showing home, project, and enterprise config zones.
+
+2. ## Your Home: ~/.claude/
+Reference-style walkthrough of everything under ~/.claude/. For each item: what it is, one line on what it does, link to the CCDD article that covered it in depth.
+
+- CLAUDE.md - personal instructions for all projects -> [#03 Total Recall]
+- settings.json - personal permissions, hooks, model prefs -> [#07 Hooks], [#12 Lock Him Up]
+- rules/*.md - personal rules with optional path scoping -> [#03]
+- commands/*.md - personal slash commands -> [#02 Slash Commands]
+- skills/*.md - personal skills -> [#04 Mad Skillz]
+- agents/*.md - personal subagent definitions -> [#06 Subagents]
+- projects/<project>/memory/ - auto memory per project
+- keybindings.json - keyboard shortcut customization
+- statusline-command.sh - custom status line script -> [#02]
+- plans/ - stored plans
+
+3. ## Your Project: .claude/
+Same reference-style walkthrough for the project .claude/ directory:
+
+- CLAUDE.md (or root CLAUDE.md) - team instructions -> [#03]
+- settings.json - shared team permissions, hooks, sandbox -> [#07], [#12]
+- settings.local.json - personal project overrides, gitignored -> [#07]
+- rules/*.md - project rules, path-scoped -> [#03]
+- commands/*.md - project slash commands -> [#02]
+- skills/ - project skills -> [#04]
+- agents/*.md - project subagents -> [#06]
+
+Root-level files outside .claude/:
+- .mcp.json - project MCP servers -> [#05 MCP Unleashed]
+- CLAUDE.md at root (alternative to .claude/CLAUDE.md) -> [#03]
+
+4. ## settings.json: The Control Panel
+The one file that appears at every scope. Organized by category with concrete examples from the author's own config:
+
+- Permissions - permissions.allow, permissions.deny, permissions.defaultMode. Real examples. Cross-ref [#09] for --allowedTools syntax, [#12] for sandbox permissions.
+- Hooks - pointer to [#07]
+- Sandbox - pointer to [#12]
+- Model & effort - model, effortLevel, availableModels
+- Environment - env key for persistent env vars
+- Worktrees - worktree.symlinkDirectories, worktree.sparsePaths
+- Other useful knobs - language, attribution, claudeMdExcludes, autoMemoryEnabled
+
+Show a real-world annotated settings.json (the author's own).
+
+Diagram: Settings Precedence - How managed > local project > shared project > user settings merge (arrays concatenate, not replace).
+
+5. ## Environment Variables & CLI Flags
+Brief paragraph: env vars and CLI flags are session-level overrides. A handful of the most commonly used ones (model, effort, provider), then link to official CLI reference and settings docs for the full list. Cross-ref [#09] for CI flags, [#10] for SDK options.
+
+6. ## Putting It All Together
+Practical walkthrough. Show the author's real setup across home and project, explain the reasoning.
+
+Concrete scenario: a developer joining a team project. What they inherit (project CLAUDE.md, shared settings, MCP servers, team skills), what they customize (personal CLAUDE.md, user settings, personal commands), and how it all layers together.
+
+Diagram: The Full Stack - Complete configuration stack for a real project, from enterprise at top through project shared config to personal user config at bottom.
+
+7. ## What's Next
+- Running multiple Claude Code sessions in parallel (agent teams and fan-out patterns)
+- Voice mode
+- Comparing Claude Code with other AI coding agents
+
+8. ## Take Home Points
+- Configuration lives in three zones: home (~/.claude/), project (.claude/), and enterprise (system paths). Each has its own scope and audience.
+- settings.json is the universal control panel, appearing at every scope with array settings merging across layers.
+- Project config is for the team (committed to git). User config is for you (stays local). Keep them separate.
+- Start with /init to bootstrap, then grow organically. Don't over-engineer upfront.
+- Each piece was covered in depth across the series. This article is the map.
+
+9. Closing Greeting
+Thai: ลาก่อนนะ เพื่อนๆ!
+
+Diagrams Needed (4)
+1. Hero image - Infographic-style config surface map (light beige background, orange accents, Claude Code color scheme)
+2. The Three Zones - Home vs Project vs Enterprise
+3. Settings Precedence - Merge behavior across scopes
+4. The Full Stack - Complete config stack for a real project
+
+Estimated Length
+~1,500-2,000 words. Reference-style, concise, heavy on cross-links.
