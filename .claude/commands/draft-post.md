@@ -21,7 +21,11 @@ Arguments: `<title>` and either inline spec text or a path to a spec file.
 
 7. Look at the most recent posts in the same series (if applicable) for structural reference: series index links, closing greeting language rotation, "What's Next" topics.
 
-8. If the topic references diagrams or images, add placeholder image references (`![](images/placeholder-name.png)`) so the user knows what visuals to create.
+8. Generate all images referenced in the post (hero image, diagrams, etc.) using the `generate-image` skill. For each image:
+   - Use the spec's description for the image prompt (style, colors, content)
+   - Save directly to the post's `images/` directory with the correct filename
+   - If no style guidance is given, default to clean diagrams with light backgrounds
+   - Generate images in parallel when possible
 
 ## Spec File Convention
 
