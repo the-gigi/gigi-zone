@@ -199,6 +199,14 @@ done
    - Run the orphan detection script periodically
    - Safe to delete - no rebuild cost for deleted worktrees
 
+## PEP Talk Series Backlog
+
+- PEP 750 - Template Strings (Python 3.14)
+- PEP 703 - Making the GIL Optional (free-threaded Python)
+- PEP 684 - Per-Interpreter GIL
+- PEP 572 - Assignment Expressions (walrus operator)
+- PEP 718 - Subscriptable Functions
+
 ## Python f-strings
 
 Explore the recent innovations like comments, str(), repr() and ascii() and async

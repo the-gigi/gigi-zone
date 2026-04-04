@@ -152,6 +152,8 @@ async def _draft(title: str, spec: str):
     year = today.strftime("%Y")
     month = today.strftime("%m")
 
+    generate_image_script = Path.home() / ".claude/skills/generate-image/scripts/generate-image.py"
+
     prompt = f"""Create a new blog post with:
 - Title: {title}
 - Spec: {spec}
@@ -167,6 +169,16 @@ images/ subdirectory, and write the full post content in index.md with proper
 TOML front matter.
 
 Follow the writing style guide and content structure from the project's CLAUDE.md.
+
+After writing the post, generate all images referenced in the markdown.
+Use this script to generate each image:
+
+    {generate_image_script} "<prompt>" <output_path>
+
+For the hero image, use a vibrant, colorful style.
+For diagrams and explanatory images, use an xkcd-style hand-drawn look.
+If the spec includes image descriptions, use those. Otherwise infer
+appropriate prompts from the image alt text and surrounding content.
 """
 
     click.echo(f"Generating draft: {title}")
