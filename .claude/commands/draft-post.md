@@ -18,6 +18,7 @@ Arguments: `<title>` and either inline spec text or a path to a spec file.
    - TOML front matter format
    - `<!--more-->` excerpt cutoff placement
    - Series-specific structure (e.g. CCDD series has emoji-bookend H2 headers, series index, What's Next, Take Home Points, closing greeting)
+   - Book plug after Take Home Points and before closing greeting (see CLAUDE.md "Book Plug" section)
 
 7. Look at the most recent posts in the same series (if applicable) for structural reference: series index links, closing greeting language rotation, "What's Next" topics.
 

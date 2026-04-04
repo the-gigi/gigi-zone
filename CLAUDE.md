@@ -56,6 +56,11 @@ The Claude Code Deep Dive (CCDD) series follows a consistent structure:
 5. `## 🏠 Take Home Points 🏠` — 4-5 concise bullets distilling the post
 6. Closing greeting in a foreign language wrapped in flag emoji
 
+### Book Plug
+Every post should include a brief book plug after Take Home Points and before the closing greeting:
+
+> 📖 If you enjoyed this post, check out my book [Design Multi-Agent AI Systems Using MCP and A2A](https://www.amazon.com/Design-Multi-Agent-Systems-Using-MCP/dp/1806116472) where I build an agentic AI framework from scratch with Python.
+
 ### Technical Depth
 - Be practical and step-by-step; include tradeoffs and failure modes.
 - Use concrete examples, commands, and config snippets.
@@ -75,6 +80,10 @@ The Claude Code Deep Dive (CCDD) series follows a consistent structure:
 - Blue/Green Upgrade for Postgres on AWS RDS (tone + diagrams + recap)
 - The Art and Science of Kubernetes Bin Packing (depth + visuals)
 - Auto Web Login (Parts I-IV) (series structure + step-by-step)
+
+## Blog Specs
+
+When planning a new article, start by writing a blog spec in `tools/gzctl/blog_specs/`. The spec file captures the article's scope, key content points, and series-specific format notes before drafting begins. Name specs after the post slug (e.g. `pep-talk-02-pep-701.md`). The spec is then used as input to `gzctl draft` or as a reference when writing the post manually.
 
 ## Tools
 
