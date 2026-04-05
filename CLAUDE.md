@@ -50,16 +50,22 @@ categories = ["Category1", "Category2"]
 ### CCDD Series Structure
 The Claude Code Deep Dive (CCDD) series follows a consistent structure:
 1. Hook paragraph (2-4 sentences, sprinkle 3-4 emoji naturally in the text) + bolded quote + `<!--more-->` + hero image
-2. Series index (numbered list linking all previous articles)
+2. Series index:
+   Use a numbered list linking all previous articles when the series is still short enough to keep inline.
+   For later installments, replace the long inline list with a short note linking to the full series list.
 3. Content sections with emoji-bookend H2 headers (`## 🔌 Title 🔌`)
 4. `## ⏭️ What's Next ⏭️` — bullet list of upcoming series topics
 5. `## 🏠 Take Home Points 🏠` — 4-5 concise bullets distilling the post
 6. Closing greeting in a foreign language wrapped in flag emoji
 
 ### Book Plug
-Every post should include a brief book plug after Take Home Points and before the closing greeting:
+Every post should include this book plug after Take Home Points and before the closing greeting (use this exact format):
 
-> 📖 If you enjoyed this post, check out my book [Design Multi-Agent AI Systems Using MCP and A2A](https://www.amazon.com/Design-Multi-Agent-Systems-Using-MCP/dp/1806116472) where I build an agentic AI framework from scratch with Python.
+```
+If you enjoyed this post, check out my book where I build an agentic AI framework from scratch with Python:
+
+📖  [Design Multi-Agent AI Systems Using MCP and A2A](https://www.amazon.com/Design-Multi-Agent-Systems-Using-MCP/dp/1806116472)
+```
 
 ### Technical Depth
 - Be practical and step-by-step; include tradeoffs and failure modes.
