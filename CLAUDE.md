@@ -59,12 +59,22 @@ The Claude Code Deep Dive (CCDD) series follows a consistent structure:
 6. Closing greeting in a foreign language wrapped in flag emoji
 
 ### Book Plug
-Every post should include this book plug after Take Home Points and before the closing greeting (use this exact format):
+Every post should include a book plug after Take Home Points and before the closing greeting. The book is series-dependent.
+
+**Default (most series, including CCDD, PEP Talk, standalone posts):**
 
 ```
 If you enjoyed this post, check out my book where I build an agentic AI framework from scratch with Python:
 
 📖  [Design Multi-Agent AI Systems Using MCP and A2A](https://www.amazon.com/Design-Multi-Agent-Systems-Using-MCP/dp/1806116472)
+```
+
+**Kubectl Deep Dive (KUDD) series:**
+
+```
+If you enjoyed this post, check out my book on running Kubernetes at scale:
+
+📖  [Mastering Kubernetes](https://www.amazon.com/Kubernetes-operate-world-class-container-native-systems/dp/1804611395)
 ```
 
 ### Technical Depth
