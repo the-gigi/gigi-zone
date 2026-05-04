@@ -76,6 +76,36 @@ https://www.philschmid.de/mcp-cli
 https://code.claude.com/docs/en/mcp#scale-with-mcp-tool-search
 ENABLE_TOOL_SEARCH in https://code.claude.com/docs/en/settings
 
+## Kubectl Deep Dive
+
+A new series exploring Kubernetes through the lens of kubectl. Assumes the reader knows
+kubectl basics. Focus on interesting, less-common, or commonly misunderstood corners.
+All posts run on local kind clusters.
+
+- #01 Be KinD — kind setup, single-node and multi-node clusters (in progress)
+- Talking to the raw Kubernetes API: `kubectl proxy`, `kubectl get --raw`, `curl`
+- Server-side apply vs client-side apply, field managers, conflicts, force
+- How does `kubectl port-forward` actually work? (SPDY/websocket internals)
+- Watches, `kubectl wait`, and why `--wait` beats `sleep`
+- Multi-cluster magic with vcluster
+- Stdin manifests: `echo '<manifest>' | kubectl apply -f -`
+- `kubectl plugins` and the krew ecosystem
+- JSONPath, custom-columns, go-template: output sorcery
+- `kubectl explain` and the live OpenAPI schema
+- `kubectl debug`: ephemeral containers, node debug, copy-pod-and-modify
+- `kubectl proxy` vs `kubectl port-forward`
+- Discovery: `api-resources`, `api-versions`, shortnames, categories
+- Dry-run modes: `--dry-run=client` vs `=server`
+- The three flavors of `kubectl patch` (strategic merge, JSON patch, merge patch)
+- `kubectl auth can-i` and `--as` impersonation
+- kubeconfig mechanics: `KUBECONFIG` merging, contexts/users/clusters as separate objects
+- `kubectl cp` internals (it shells out to `tar`)
+- `kubectl events` (the dedicated command) vs `get events`
+- `kubectl exec` internals: SPDY/websockets, TTY allocation
+- Field selectors vs label selectors and their server-side limits
+- `kubectl diff` and how it uses the SSA machinery
+- `kubectl edit`: `$KUBECTL_EDITOR`, the temp-file dance, silent no-ops
+
 ## Pause and Resume Kubernetes Pods
 
 ## Kubernetes Node Group Architecture
@@ -228,4 +258,8 @@ Compare to other languages
 ## AI Agents in the Docker ecosystem
 
 https://www.docker.com/blog/run-claude-code-with-docker/?utm_source=tldrdevops
+
+## AG-UI - Agentic UI Generation
+
+Explore AG-UI for agent-driven UI generation. How agents produce UIs dynamically, the protocol/spec, integration patterns, and where it shines vs. traditional templated UIs.
 
