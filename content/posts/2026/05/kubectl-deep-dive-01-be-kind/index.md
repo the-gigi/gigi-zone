@@ -110,13 +110,13 @@ Deleting cluster "dev" ...
 Deleted nodes: ["dev-control-plane"]
 ```
 
-Note the `--name` flag everywhere. If you forget it, KinD defaults to `kind`, which is rarely what you mean once you have more than one cluster on the laptop. I have made this mistake more times than I want to admit.
+Note the `--name` flag everywhere. If you forget it, KinD defaults to `kind`, which is rarely what you mean once you have more than one cluster on the laptop. I have made this mistake several times.
 
 ## 🏘️ Multi-Node Clusters 🏘️
 
 A single-node cluster is fine for a lot of things. It is not fine when you want to test scheduling, taints, tolerations, pod affinity and anti-affinity, daemonsets, real pod-to-pod networking across nodes, draining, or PodDisruptionBudgets. For any of that, you want multiple nodes.
 
-This is where KinD earns its keep. Instead of spinning up VMs, it just runs more Docker containers. The configuration lives in a small YAML file:
+No worries. KinD got you covered. Instead of spinning up VMs, it just runs more Docker containers. This lightweight and fast. The configuration lives in a small YAML file:
 
 ```yaml
 # kind-multi.yaml
@@ -156,9 +156,9 @@ multi-worker2         Ready    <none>          20s   v1.35.0   172.19.0.5    <no
 multi-worker3         Ready    <none>          20s   v1.35.0   172.19.0.4    <none>        Debian GNU/Linux 12 (bookworm)   6.12.76-linuxkit   containerd://2.2.0
 ```
 
-A four-node cluster on a laptop, in roughly the time it takes to read this paragraph. The node containers sit on a Docker network, and KinD's default CNI (kindnet) handles pod routing across them, so cross-node pod traffic works without extra setup.
+A four-node cluster on a laptop, in roughly the time it takes to read this paragraph. The node containers sit on a Docker network, and KinD's default CNI (kindnet) handles pod routing across them, so cross-node pod traffic works without extra setup. Just like in any Kubernetes cluster where the networking model ensures all pods have unique IP addresses and can reach each other.
 
-The whole reason KinD is fast is that every node is just a Docker container. You can prove it:
+The whole reason KinD is fast is that every node is just a Docker container. If you want to see for yourself just use `docker ps`:
 
 ```bash
 $ docker ps --format 'table {{.Names}}\t{{.Image}}'
@@ -176,7 +176,7 @@ $ docker exec -it multi-worker bash
 root@multi-worker:/# crictl ps | head -3
 ```
 
-You can read kubelet logs, inspect containerd, watch the actual processes that make up a Kubernetes node. That kind of access is invaluable when something is acting strangely and you want to see what is really happening.
+You can read kubelet logs, inspect containerd, watch the actual processes that make up a Kubernetes node. That kind of access is invaluable when something is acting strangely, and you want to see what is really happening.
 
 If you want HA control-plane testing, KinD supports that too. The YAML shape is the same, just add more `role: control-plane` entries and KinD will set up an internal load balancer container in front of the API servers:
 
@@ -198,15 +198,15 @@ Three control planes plus three workers is a useful topology when you care about
 
 ## 🛠️ KinD Quality of Life 🛠️
 
-Here are the KinD tricks I actually reach for between experiments.
+Here are a couple of KinD tricks that are useful when working locally.
 
 **Loading local images.** KinD nodes are isolated Docker containers, so the image you just built on your host is not visible to them. Instead of running a registry, KinD has a shortcut:
 
 ```bash
-kind load docker-image my-app:dev --name multi
+kind load docker-image the-app:dev --name multi
 ```
 
-This sideloads the image into every node of the named cluster. No registry, no tagging gymnastics, no waiting on a push. One footgun to remember: avoid the `:latest` tag and set `imagePullPolicy: IfNotPresent` (or `Never`) on your pod, otherwise Kubernetes may decide to ignore the sideloaded copy and pull a fresh one anyway.
+This sideloads the image into every node of the named cluster. No registry, no tagging gymnastics, no waiting on a push. One footgun to remember: avoid the `:latest` tag and dont set the `imagePullPolicy: Always` on your pod, otherwise Kubernetes will ignore the sideloaded copy and pull a fresh one anyway (or fail if it doesn't exist in the registry).
 
 **Port mappings.** When you want traffic from your host to reach inside the cluster (an ingress controller, for example), add `extraPortMappings` to the KinD config:
 
@@ -232,7 +232,7 @@ nodes:
         containerPath: /data
 ```
 
-**Fast teardown.** Between articles, between experiments, between coffee, I run:
+**Fast teardown.** Since, these clusters take resources when you're done clean them up:
 
 ```bash
 kind delete clusters --all
@@ -240,7 +240,7 @@ kind delete clusters --all
 
 Done. Clean slate. The whole thing takes a few seconds because we are just stopping and removing Docker containers.
 
-**Pin a context per project.** Combine KinD cluster names with `direnv` (a future post on the topics list, hint hint) so each project directory automatically points kubectl at the right cluster when you cd in. Once you have it set up you stop accidentally running experiments against the wrong context.
+**Pin a context per project.** Combine KinD cluster names with `direnv`  so each project directory automatically points kubectl at the right cluster when you cd in. Once you have it set up you stop accidentally running commands against the wrong context.
 
 ## ⏭️ What's Next ⏭️
 
