@@ -1,5 +1,34 @@
 # Blog post topics
 
+
+## You are worthless
+
+You are worthless. You and me both. You me and everyone else are worthless. AI is better than all of us at everything! OK, maybe not today. but in a year or two
+
+
+It's a unique situation. Jevon's paradox applies to AI too. But, what is the 10% that requires a human judgment? AI can reason better than humans (Gold at math olympiad), it can search and synthesize data better than humans, it is more creative (just ask it for 10 ideas on anything), it can even be more emphatic, patient and adopt its communication style to each human (see growth in AI companions).
+
+So, I agree that new kind of jobs will be created, but who is better to perform these jobs? humans or AI?
+
+Even today's AI agents can perform better than humans if you just give them access to the data and tools and systems in many jobs (see GDPEval).
+
+The last moat of humans is trust and control, in case the AI hallucinates or gets out of control and you need a human to notice and remediate the situation. The so-called human in the loop. But, again AI will be better at that as well. This is not a case of the fox guarding the henhouse as you may think. You can have a separate AI (separate context window, separate model) guard the acting AI. You can have a quorum of multiple AIs vetting each action of current AI. It will be  much more reliable than human review and approval.
+
+When you realize that AI will keep improving exponentially then the days of human labor are numbered regardless of how many new jobs are created.
+
+
+
+
+
+
+## Magic
+
+
+
+
+
+
+
 ## 2037
 
 Comedy club where AI standup comedian is making fun of humans worrying about C timestamp wrapping around when AI agents

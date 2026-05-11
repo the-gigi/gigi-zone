@@ -85,6 +85,7 @@ If you enjoyed this post, check out my book on running Kubernetes at scale:
 ### Formatting Conventions
 - Include `<!--more-->` after the hook/intro.
 - Use image assets under the post's `images/` folder.
+- Every post must have `images/hero.png` referenced right after `<!--more-->`. Mandatory for all series (CCDD, KUDD, PEP Talk, standalone).
 - Keep headings short; emoji-wrapped headers are a house style.
 - Never use markdown tables. They don't render properly on Medium. Use prose, lists, or side-by-side code blocks instead.
 
@@ -110,6 +111,15 @@ When planning a new article, start by writing a blog spec in `tools/gzctl/blog_s
 - Automatic on push to `main` branch via GitHub Actions
 - Always run `hugo serve` locally to verify before pushing
 - CI uses Hugo v0.122.0 (extended)
+
+## Medium Publishing Gotchas
+
+The `gzctl publish-py` command pushes posts to Medium as drafts. A few things bite that you only learn the hard way:
+
+- **Images need GitHub Pages live first.** `gzctl` rewrites relative `![](images/...)` paths to absolute URLs on `the-gigi.github.io/gigi-zone/...`. If you `git push` and immediately run `publish-py`, Medium's image importer races the Pages deploy and the hero image silently 404s. **Always wait for the Pages deploy to finish before publishing to Medium.** Verify with `curl -I https://the-gigi.github.io/gigi-zone/posts/<path>/images/hero.png` returning 200.
+- **`--` in H2/H3 headings becomes em-dash on Medium.** Markdown like `## kubectl get --raw` renders as `kubectl get—raw`. Sweep for `--` in headings before publishing and wrap the affected token in backticks (e.g. `` ## 🪶 `kubectl get --raw` 🪶 ``). Code-formatted text bypasses Medium's smart-quote pass.
+- **Spaced ` - ` in body prose** is already handled by `gzctl` (inserts a zero-width space after the hyphen). No action needed.
+- Re-publishing creates a **new** draft each time (Medium API can't update). If you re-publish after edits, delete the stale draft from Medium manually.
 
 ## Customizations
 
