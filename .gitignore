@@ -1,5 +1,8 @@
 .idea
 .DS_Store
 public/
+resources/_gen/
+resources/_gen_cache/
+.hugo_build.lock
 tools/gzctl/.env
 .claude/scheduled_tasks.lock

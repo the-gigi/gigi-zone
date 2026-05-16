@@ -143,6 +143,22 @@ All posts run on local kind clusters.
 
 ## Kubernetes Resource Fine-tuning
 
+## Kubernetes Hot Take - CRDs are Considered Harmful
+
+High-cardinality CRDs and the operators that manage them are bad news for large-scale clusters.
+They pile pressure on the API server (watches, list/relist storms, etcd object counts) and end up
+treating Kubernetes as a general-purpose database, which it isn't. For your own internal systems,
+a real DB is almost always the right home for that state.
+
+Where CRDs *do* shine: publishing lifecycle logic for products you want others to install and run
+in their own clusters (operators as a distribution mechanism). The CRD is a contract for an
+ecosystem, not a substitute for `CREATE TABLE`.
+
+- API server / etcd pressure from high-cardinality CRs
+- Watch fan-out and resync costs
+- "Everything is a CRD" vs. "the right tool is a DB"
+- When CRDs are the right answer: shipping operators to other people's clusters
+
 ## Configuration Files Considered Harmful (Sort of)
 
 There is nothing like a good "<Blank> is considered Harmful" essay to exasperate the unwashed masses of anguished
