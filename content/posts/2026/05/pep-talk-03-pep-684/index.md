@@ -1,0 +1,211 @@
++++
+title = 'PEP Talk #3 - PEP 684: A Per-Interpreter GIL'
+date = 2026-05-17T10:00:00-07:00
+categories = ["Python", "PEP", "Concurrency"]
++++
+
+The GIL is the most famous lock in software 🔒. For three decades it has kept CPython's runtime simple and its bytecode strictly serial 🐢. Two PEPs are finally moving the needle: PEP 703 takes the GIL out entirely, and PEP 684 (the subject of this post) takes a quieter, sneakier route 🥷. Same binary, no ABI break, multi-core Python today 🚀.
+
+**"Special cases aren't special enough to break the rules." -- The Zen of Python, PEP 20**
+
+<!--more-->
+
+![hero](images/hero.png)
+
+This is the third post in the **PEP Talk** series, where I pick a Python Enhancement Proposal and dig into it.
+
+1. [PEP Talk #1 - PEP 723: Inline Script Metadata](https://medium.com/gitconnected/pep-talk-1-pep-723-inline-script-metadata-51e1ca1b4a5c)
+2. [PEP Talk #2 - PEP 750: Template Strings](https://medium.com/gitconnected/pep-talk-2-pep-750-template-strings-6e6e07c61eb6)
+3. PEP Talk #3 - PEP 684: A Per-Interpreter GIL (this post)
+
+## 🔒 The GIL, Briefly 🔒
+
+The Global Interpreter Lock is a mutex inside CPython that lets only one OS thread execute Python bytecode at a time, even on a machine with sixteen idle cores. It is there for a good reason. CPython's memory management is built on reference counts, every `Py_INCREF` and `Py_DECREF` would otherwise need to be atomic, and the C extension ecosystem grew up assuming "if I have the GIL, nobody else is touching Python state." Releasing those assumptions is a *lot* of work, which is why the GIL is still here.
+
+The cost is well known. Pure-Python CPU-bound code does not scale across cores in a single process. The classic workarounds are all compromises. `multiprocessing` gives you parallelism but you pay for process startup, IPC, and pickle. C extensions that release the GIL (NumPy, Pillow, `requests` under the hood) give your *library* code parallelism but your Python loop is still single-threaded. `asyncio` gives you concurrency for I/O but not parallelism for compute.
+
+For years the community treated this as a fact of life. It is not, anymore. There are two PEPs in flight that change the story.
+
+## 🍴 Two Forks in the Road 🍴
+
+PEP 703 removes the GIL entirely. You build a separate `python3.14t` binary, the interpreter does refcount work atomically (with biased reference counting and per-object locks), and threads can execute Python in parallel like in Java or Go. The price is an ABI break (every C extension needs a no-GIL build) and some single-threaded performance overhead from the new locking.
+
+PEP 684 takes the other fork. Keep the GIL, but make it *per-interpreter*. Move the runtime state the GIL protects out of process globals and into each interpreter's state. Now each interpreter carries its own GIL, and multiple interpreters in the same process can run Python bytecode on different cores at the same time. Same binary. No ABI break. The catch: interpreters don't share objects with each other.
+
+![GIL paths comparison](images/diagram-gil-paths.png)
+
+Both PEPs are real and both are landing in shipping CPython. This post is about PEP 684. You can play with the per-interpreter GIL story today without recompiling anything, which is half the appeal.
+
+## 🪞 Wait, Subinterpreters? 🪞
+
+A piece of context that most Python programmers have never needed. CPython has had *subinterpreters* in its C API since Python 1.5, somewhere around 1997. The function is `Py_NewInterpreter`, and it gives you a second interpreter inside the same process, with its own `sys.modules`, its own imported state, its own classes. Apache's `mod_wsgi` has used this for years to isolate web apps inside one Apache process. Game engines embedding Python have used it to sandbox mods.
+
+The problem was that until Python 3.12, all subinterpreters in a process *shared one GIL*. They gave you isolation but not parallelism. Two subinterpreters could not run Python bytecode simultaneously any more than two threads could. They were useful for separation of concerns; they were useless for using more cores.
+
+That is exactly the limitation PEP 684 removes.
+
+## 🎯 PEP 684 in One Sentence 🎯
+
+Move the global state the GIL protects out of CPython's process-wide globals and into `PyInterpreterState`, then let each interpreter carry its own GIL.
+
+Eric Snow led this work over several years. It landed in Python 3.12 (October 2023). The PEP itself is mostly a giant migration plan: identify every piece of mutable runtime state that the GIL was protecting, decide whether it belongs to a single interpreter or stays truly global, and physically move it. Some things stay global because they are genuinely shared (the memory allocator, immortal builtins, signal handlers in the main interpreter). Most things became per-interpreter.
+
+The result is a CPython where you can spin up a fresh interpreter with its own GIL and run Python in parallel with everyone else.
+
+## 🧰 The C API (Skip If You Are Not An Embedder) 🧰
+
+PEP 684 itself is a C API PEP. The user-visible additions are:
+
+- `PyInterpreterConfig`, a small struct that configures a new interpreter.
+- `Py_NewInterpreterFromConfig`, which takes that config and gives you a fresh interpreter.
+- Two initializer macros: `PyInterpreterConfig_INIT` (isolated, own GIL, the modern default) and `PyInterpreterConfig_LEGACY_INIT` (pre-3.12 behavior, shared GIL).
+- An `own_gil` flag on the config (1 means "give this interpreter its own GIL", 0 means "share the main interpreter's GIL").
+
+```c
+PyInterpreterConfig config = PyInterpreterConfig_INIT;
+config.own_gil = 1;
+PyThreadState *tstate;
+PyStatus status = Py_NewInterpreterFromConfig(&tstate, &config);
+```
+
+Most Python programmers never write this code. We get a friendlier surface instead, courtesy of PEP 734.
+
+## 🐍 The Python Surface: `concurrent.interpreters` 🐍
+
+PEP 684 set up the engine. PEP 734 put a steering wheel on it. The `concurrent.interpreters` module shipped in Python 3.14 (it also exists in 3.13 as a provisional `interpreters` module, but 3.14 is the stable home). It is a deliberately small API:
+
+- `interpreters.create()` returns a fresh `Interpreter` with its own GIL.
+- `interp.exec(code)` runs source code in the interpreter's `__main__`, synchronously, in the current OS thread.
+- `interp.call(callable)` calls a plain no-argument function in the interpreter. (Yes, this is restrictive today. It will grow.)
+- `interp.call_in_thread(callable)` runs that function in a fresh OS thread inside the interpreter. This is where actual parallelism comes from.
+- `interp.prepare_main(**kwargs)` seeds the interpreter's `__main__` namespace with values before exec.
+- `interp.close()` tears it down.
+- `interpreters.create_queue()` returns a `Queue` that ferries data across interpreters.
+
+That is essentially the whole module. Let's drive it.
+
+## 👋 Hello, Other Interpreter 👋
+
+The simplest possible program:
+
+```python
+from concurrent import interpreters
+
+interp = interpreters.create()
+interp.exec("print('hello from another interpreter')")
+interp.close()
+```
+
+Run this on Python 3.14 and you get `hello from another interpreter`. The line ran inside a *different* interpreter from your script's main one. Different `sys.modules`, different `__main__`, different GIL. Same process, no fork, no pickling.
+
+Note that `interp.exec` blocks the calling thread. We just created a parallelism primitive and used it sequentially. To actually use cores, we need threads.
+
+## ⚡ Actual Parallelism ⚡
+
+Here is the program that makes the per-interpreter GIL feel real. We pick a CPU-bound pure-Python loop, run it four times across four subinterpreters in four threads, and time it.
+
+```python
+from concurrent import interpreters
+import threading
+import time
+
+N = 50_000_000
+CODE = """
+total = 0
+for i in range(N):
+    total += i * i
+results.put(total)
+"""
+
+def worker():
+    interp = interpreters.create()
+    interp.prepare_main(N=N, results=results)
+    interp.exec(CODE)
+    interp.close()
+
+results = interpreters.create_queue()
+
+t0 = time.perf_counter()
+threads = [threading.Thread(target=worker) for _ in range(4)]
+for t in threads: t.start()
+for t in threads: t.join()
+elapsed = time.perf_counter() - t0
+
+print(f"4 interpreters in 4 threads: {elapsed:.2f}s")
+while not results.empty():
+    print(" got:", results.get())
+```
+
+On my laptop this finishes in roughly the time of a single loop, not four. Run the same loop sequentially four times and you wait roughly 4x longer. Run it across four `threading.Thread` instances in the *same* interpreter and you also wait roughly 4x longer, because the shared GIL serializes them.
+
+This is the moment that has been missing for thirty years. Pure-Python CPU work scaling across cores, in one process, without `multiprocessing`.
+
+## 🧱 What Subinterpreters Do NOT Share 🧱
+
+This is where people get tripped up if they expect "like threads, but parallel." Interpreters are deliberately isolated. They do not share:
+
+- `sys.modules`. Each interpreter imports its own copies. Importing `numpy` in two interpreters loads it twice.
+- Module globals. A module-level dict mutated in one interpreter is invisible in another.
+- Object identity. You cannot pass an arbitrary Python object across. There is no shared heap.
+- Most C extension state, unless the extension was built to handle it.
+
+![Interpreter isolation](images/diagram-interpreter-isolation.png)
+
+This sounds like a downside. It is actually the entire trick. Shared mutable state is exactly what forces a shared GIL. Take the sharing away and the lock can be per-interpreter.
+
+## 📨 Talking Across the Wall 📨
+
+If interpreters cannot share objects, how do they cooperate? Two mechanisms.
+
+`prepare_main(**kwargs)` injects values into the new interpreter's `__main__` namespace before you `exec`. That is how the example above made `N` and `results` visible inside `CODE`.
+
+`interpreters.create_queue()` creates a queue that lives outside any one interpreter and ferries data between them. Anything pickleable can go through it. Internally the queue does not actually move the same Python object across the wall, it copies the underlying data and reconstructs the object on the receiving side. For most payloads that is fine.
+
+There is a clever exception. Objects that implement the buffer protocol (`memoryview`, NumPy arrays, `bytes`, `bytearray`) are *actually shared* across interpreters at the memory level, not copied. That matters when you want to ship a gigabyte tensor between workers and would rather not duplicate it.
+
+## ⚠️ The Sharp Edges ⚠️
+
+Per-interpreter GIL is real and shipping, but it is also young. A few things to know before you bet a system on it.
+
+**C extension compatibility.** A C extension can be loaded into a subinterpreter only if it uses multi-phase initialization (PEP 489). Even with multi-phase init, an extension can still be unsafe under a per-interpreter GIL if it has C-level global state that two interpreters could touch simultaneously. The big numerical stack (NumPy, SciPy, PyTorch) is in various stages of getting there. Check the status of the libraries you depend on rather than assuming. If something is not ready, you will get an `ImportError` when you try to import it inside a subinterpreter, which is the right failure mode.
+
+**Startup cost.** Creating a subinterpreter is much more expensive than starting a thread. It is closer to forking a small Python process than to spawning a thread. Plan on a pool of interpreters, not a fresh one per task.
+
+**Memory.** Each interpreter has its own copy of every module it imports. If you spin up sixteen interpreters and they all import the world, you pay for the world sixteen times.
+
+**The API is intentionally minimal.** `interp.call` only takes plain no-argument functions today. You cannot just hand it a closure with captured state. The pattern that works right now is `prepare_main` + `exec` + a `Queue` for results. The module will grow.
+
+**It is a primitive, not a framework.** `concurrent.interpreters` gives you the building block. You still write the decomposition, the work stealing, the back-pressure. Expect higher-level wrappers (something like `concurrent.futures.InterpreterPoolExecutor`) to emerge as the ecosystem matures.
+
+## 🧭 When To Reach For Which Tool 🧭
+
+A rough decision tree for parallel Python in 2026.
+
+If the heavy lifting is already in a C library that releases the GIL (NumPy linear algebra, image processing, HTTP via `requests`), regular threads remain the simplest answer. Nothing in this PEP changes that.
+
+If you are running pure-Python CPU-bound code and you need it to scale across cores in one process, this is the new sweet spot. Use subinterpreters via `concurrent.interpreters`. The isolation matches `multiprocessing`'s mental model; the startup and communication overhead is dramatically lower.
+
+If you genuinely need OS-level isolation (separate address spaces, separate crash domains, the ability to nuke a runaway worker), `multiprocessing` is still the right answer. Per-interpreter GIL gives you parallelism, not process isolation.
+
+If you want shared mutable objects across threads with real parallelism and you are comfortable on the experimental edge, look at the free-threaded build from PEP 703. It is a different tradeoff: more flexible programming model, costlier ecosystem migration.
+
+## 🌅 The Bigger Picture 🌅
+
+For most of CPython's history, "GIL" was a single topic with no real alternative. After PEP 684 and PEP 703 it is two topics, and you actually get to pick. PEP 684 is the conservative, ecosystem-preserving path: keep the existing CPython binary and ABI, keep the existing programming model in one interpreter, and unlock parallelism by spawning *more* interpreters. PEP 703 is the bolder path: rebuild the world without the lock.
+
+What I love about PEP 684 is that it required no one to rewrite their code, and yet the resulting capability is genuinely new. The work to migrate runtime state into `PyInterpreterState` also delivered fixes for long-standing initialization bugs and cleaner C API layering as a side benefit. It is rare to get a feature this large without a corresponding breakage tax.
+
+## 🏠 Take Home Points 🏠
+
+- PEP 684 (Python 3.12) gives each CPython subinterpreter its own GIL, so multiple interpreters in the same process can execute Python bytecode in parallel on different cores
+- PEP 734 (Python 3.14, `concurrent.interpreters`) is the friendly Python-level API on top: `create()`, `exec()`, `call_in_thread()`, `prepare_main()`, plus cross-interpreter queues
+- Subinterpreters do not share `sys.modules`, globals, or object identity, that isolation is the entire reason the GIL can be per-interpreter
+- Communicate across interpreters with `prepare_main(**kwargs)` and `interpreters.create_queue()`, buffer-protocol objects are actually shared rather than copied
+- The big asterisks today: C extensions need PEP 489 multi-phase init to load in a subinterpreter, interpreter startup is heavier than a thread, and the API is deliberately minimal while the model settles
+- PEP 684 and PEP 703 (free-threaded build) are complementary paths to parallel Python, you get to pick the tradeoff that fits your workload
+
+If you enjoyed this post, check out my book where I build an agentic AI framework from scratch with Python:
+
+📖  [Design Multi-Agent AI Systems Using MCP and A2A](https://www.amazon.com/Design-Multi-Agent-Systems-Using-MCP/dp/1806116472)
+
+🇮🇹 Arrivederci amici! 🇮🇹
