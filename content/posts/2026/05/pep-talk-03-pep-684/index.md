@@ -92,11 +92,17 @@ The simplest possible program:
 from concurrent import interpreters
 
 interp = interpreters.create()
-interp.exec("print('hello from another interpreter')")
+interp.exec("print('Yeah, it works')")
 interp.close()
 ```
 
-Run this on Python 3.14 and you get `hello from another interpreter`. The line ran inside a *different* interpreter from your script's main one. Different `sys.modules`, different `__main__`, different GIL. Same process, no fork, no pickling.
+Run this on Python 3.14 and you get:
+
+```
+Yeah, it works
+```
+
+The line ran inside a *different* interpreter from your script's main one. Different `sys.modules`, different `__main__`, different GIL. Same process, no fork, no pickling.
 
 Note that `interp.exec` blocks the calling thread. We just created a parallelism primitive and used it sequentially. To actually use cores, we need threads.
 
@@ -117,16 +123,24 @@ for i in range(N):
 results.put(total)
 """
 
-def worker():
-    interp = interpreters.create()
-    interp.prepare_main(N=N, results=results)
-    interp.exec(CODE)
-    interp.close()
-
 results = interpreters.create_queue()
 
+# Keep the interpreters owned by the main thread so they outlive the
+# worker threads. Items posted to a cross-interpreter queue from a
+# *destroyed* subinterpreter get replaced with the `UNBOUND` sentinel
+# by default — if `interp` is a local in `worker()`, the interpreter
+# is collected as soon as the thread returns and the totals you read
+# back are sentinels, not numbers. Owning them at module level fixes
+# that.
+interps = [interpreters.create() for _ in range(4)]
+for interp in interps:
+    interp.prepare_main(N=N, results=results)
+
+def worker(interp):
+    interp.exec(CODE)
+
 t0 = time.perf_counter()
-threads = [threading.Thread(target=worker) for _ in range(4)]
+threads = [threading.Thread(target=worker, args=(interp,)) for interp in interps]
 for t in threads: t.start()
 for t in threads: t.join()
 elapsed = time.perf_counter() - t0
@@ -134,11 +148,89 @@ elapsed = time.perf_counter() - t0
 print(f"4 interpreters in 4 threads: {elapsed:.2f}s")
 while not results.empty():
     print(" got:", results.get())
+
+for interp in interps:
+    interp.close()
 ```
 
-On my laptop this finishes in roughly the time of a single loop, not four. Run the same loop sequentially four times and you wait roughly 4x longer. Run it across four `threading.Thread` instances in the *same* interpreter and you also wait roughly 4x longer, because the shared GIL serializes them.
+On my M-series laptop running CPython 3.14.4, three runs in a row:
 
-This is the moment that has been missing for thirty years. Pure-Python CPU work scaling across cores, in one process, without `multiprocessing`.
+```
+4 interpreters in 4 threads: 2.81s
+ got: 41666665416666675000000
+ got: 41666665416666675000000
+ got: 41666665416666675000000
+ got: 41666665416666675000000
+4 interpreters in 4 threads: 2.96s
+4 interpreters in 4 threads: 3.12s
+```
+
+Now the comparison. Run the same loop sequentially four times (wrapped in a function so the bytecode uses `LOAD_FAST`, not module-level `LOAD_NAME`):
+
+```
+4 loops, sequential (in functions): 5.34s
+```
+
+And the same workload across four `threading.Thread` instances in the *same* interpreter, where the shared GIL serializes them:
+
+```
+4 threads, same interpreter (shared GIL): 5.55s
+```
+
+Roughly **1.8× faster** than either single-interpreter approach. It's real, repeatable, pure-Python CPU work scaling across cores in one process without `multiprocessing` — the gap that's been there for thirty years. But it's also nowhere near the clean 4× a back-of-envelope "four cores, four threads" calculation would predict. That gap deserves an explanation, because it tells you a lot about which workloads PEP 684 actually wins on.
+
+### 🤔 Why Not 4×? 🤔
+
+Per-interpreter GIL removes the lock. It doesn't remove everything that serializes pure-Python work. Four real costs add up to the ~1.8× ceiling on *this* workload, in roughly the order they hurt:
+
+1. **Big-int allocation pressure.** Python ints are immutable `PyLong` objects (the small-int cache covers only `-5..256`), so `total += i*i` allocates a fresh `PyLong` on essentially every iteration. By the end of the loop `total` is around `4e22`, which needs multiple 30-bit `PyLong` limbs, so each result is a non-trivial heap allocation. PEP 684 *does* give each own-GIL interpreter its own object allocator state (freelists, arenas), so the common case stays lock-free, but every so often an interpreter has to replenish from a process-wide arena and that goes through the runtime's shared allocator. Multiply tens of millions of allocations by four interpreters and the occasional arena handoff stops being free.
+
+2. **Apple Silicon P/E asymmetry.** M-series chips ship 4 performance cores plus 4-6 efficiency cores. macOS doesn't pin Python threads to P-cores, so at least one of the four worker threads tends to land on an E-core, which runs the same code roughly 2× slower. Wall-clock is set by the slowest thread, so a single E-core schedule drags the whole group. You can sometimes nudge this with `caffeinate -i` or QoS hints, but Python doesn't expose them cleanly. On a uniform-core box (a Linux desktop with eight identical cores, say) this term shrinks a lot.
+
+3. **Lifecycle overhead in practice.** `t0` above starts *after* `interpreters.create()` and `prepare_main()` have already run, so subinterpreter setup isn't actually in this measurement. But it shows up the moment you stop running one task per fresh interpreter. Each `interpreters.create()` initializes a new `__main__`, a new `sys.modules`, and the import machinery. In a real workload you want a pool of long-lived interpreters that each chew through many work units, not one-shot interpreters per task, or your wall clock starts looking very different.
+
+4. **Cross-interpreter `Queue.put` synchronizes.** Each `results.put(total)` marshals the value across the interpreter boundary through a shared structure with its own lock. Four threads contending on a single queue at finish time is a brief but real serialization point. Dropping the queue (compute-and-exit, read from `prepare_main`-bound shared state, or use one queue per worker) recovers a bit more of the gap. (Cyclic GC, in case you were wondering, isn't a factor here. `PyLong` objects aren't tracked by the cyclic collector, so the four interpreters never trip a GC pause from this workload at all.)
+
+### 📈 When You Get Closer To Linear Speedup 📈
+
+Swap the workload to something where the inner loop is C code that releases the GIL, and the numbers change dramatically. NumPy would be the obvious pick, except NumPy 2.4 still does not load inside a subinterpreter (`ImportError: module numpy._core._multiarray_umath does not support loading in subinterpreters`), which is exactly the C-extension caveat I'll cover in a moment. So let's reach for something in the stdlib that does work: `hashlib.sha256`, which spends almost all its time in OpenSSL with the GIL released.
+
+```python
+CODE = """
+import hashlib
+h = hashlib.sha256()
+for _ in range(N):
+    h.update(payload)
+results.put(h.hexdigest())
+"""
+
+N = 50_000
+payload = b"x" * 4096  # 4 KiB, shareable via prepare_main
+```
+
+On the same M-series laptop:
+
+```
+1 thread baseline (50_000 hashes):     0.06s
+4 hash workers, sequential:            0.26s
+4 hash workers, threads + shared GIL:  0.10s  (~2.5x vs sequential)
+4 hash workers, four subinterpreters:  0.07s  (~3.7x vs sequential)
+```
+
+The shared-GIL threads already get a noticeable win because `hashlib` releases the GIL during the OpenSSL call. The subinterpreter run gets even closer to the 4× ceiling because the small slice of Python-bytecode bookkeeping around each `update()` now runs in parallel too. An honest rule of thumb for what to expect on 4 cores:
+
+- **Pure-Python loop with heavy `PyLong` allocation** (this post's example): roughly 1.5-2× faster than a single thread.
+- **Pure-Python loop on small ints or fixed-width math** (no overflow into big-int allocation): roughly 2-3×.
+- **Mostly C extension work that releases the GIL *and* supports subinterpreters** (stdlib `hashlib`, `zlib`, `bz2`, `lzma`): roughly 3-4×, close to linear. The big numerical stack (NumPy, SciPy, PyTorch) qualifies on the first half but not yet on the second, so this path doesn't help for them today. Note that not every C-looking stdlib module releases the GIL: CPython's regex engine (`re`) holds the GIL while matching, so subinterpreter speedup there is closer to the pure-Python row above than this one.
+- **I/O-bound workloads** (network, disk): reach for regular threads or `asyncio`, PEP 684 isn't aimed at this.
+
+### 🆓 What About PEP 703 (`--disable-gil`)? 🆓
+
+Sam Gross's free-threaded build (PEP 703, accepted in 2023, experimental in CPython 3.13/3.14) takes a different tack: keep one interpreter, drop the GIL entirely, use biased reference counting and immortalize more objects to keep single-threaded performance from collapsing. On the allocation-heavy benchmark above, the free-threaded build typically beats per-interpreter GIL — because biased ref-counts make shared-object accesses cheaper than going through `prepare_main` / cross-interpreter queues.
+
+The trade-off is the opposite shape: free-threaded keeps Python's "shared mutable everything" model, so anything you used to write with `threading.Thread` Just Works (or at least Just Compiles), but you pay a single-thread overhead — typically 5-20% slower than the GIL build on serial code. PEP 684 keeps single-thread performance unchanged but forces you to redesign for isolation.
+
+Two PEPs, two trade-off curves. Neither replaces the other; together they cover more of the parallelism landscape than CPython has ever had.
 
 ## 🧱 What Subinterpreters Do NOT Share 🧱
 
@@ -161,7 +253,7 @@ If interpreters cannot share objects, how do they cooperate? Two mechanisms.
 
 `interpreters.create_queue()` creates a queue that lives outside any one interpreter and ferries data between them. Anything pickleable can go through it. Internally the queue does not actually move the same Python object across the wall, it copies the underlying data and reconstructs the object on the receiving side. For most payloads that is fine.
 
-There is a clever exception. Objects that implement the buffer protocol (`memoryview`, NumPy arrays, `bytes`, `bytearray`) are *actually shared* across interpreters at the memory level, not copied. That matters when you want to ship a gigabyte tensor between workers and would rather not duplicate it.
+There is a clever exception: `memoryview`. A `memoryview` wrapping any buffer-protocol object (a `bytearray`, a NumPy array, an `array.array`) is *actually shared* across interpreters at the memory level, not copied. Mutate the underlying buffer in interpreter A and interpreter B sees it. That is the escape hatch when you want to ship a gigabyte tensor between workers and would rather not duplicate it. The raw `bytearray` itself is not directly shareable (`prepare_main(buf=bytearray(...))` raises `NotShareableError`), you have to hand the subinterpreter a `memoryview` of it.
 
 ## ⚠️ The Sharp Edges ⚠️
 
