@@ -304,6 +304,21 @@ Compare to other languages
 
 https://www.docker.com/blog/run-claude-code-with-docker/?utm_source=tldrdevops
 
+## Kubernetes MutatingAdmissionPolicy — CEL-Based Pod Mutation Without a Webhook Server
+
+K8s 1.32+ ships a new resource type, `MutatingAdmissionPolicy`, that lets you write pod-mutation rules in pure CEL (Common Expression Language) without deploying a webhook server. No TLS, no Deployment, no `caBundle` dance — just a policy object and a binding.
+
+Real-world use case from SPACE: a repeatable rollout smoke-test needs a small batch of "smoke" sandbox pods to tolerate an isolation taint and carry a specific nodeSelector, while regular user-create pods remain unaffected. A `MutatingAdmissionPolicy` bound to the `sandboxes` namespace with a CEL match expression on a pod label does this in ~20 lines of YAML.
+
+Contrast with the traditional path (full webhook server + cert-manager + `MutatingWebhookConfiguration` registration) and show why CEL-based mutation is the right default for simple in-cluster policies.
+
+Cover:
+- The `MutatingAdmissionPolicy` + `MutatingAdmissionPolicyBinding` API shape
+- CEL match conditions and mutation expressions (`applyConfiguration` with JSON patch)
+- Scoping to a namespace, label selector, or specific resource
+- Feature availability: alpha in 1.32, GA in 1.?? — check the gate name and how to enable it on EKS
+- When to still use a full webhook (complex mutation logic, cross-resource decisions, non-CEL languages)
+
 ## AG-UI - Agentic UI Generation
 
 Explore AG-UI for agent-driven UI generation. How agents produce UIs dynamically, the protocol/spec, integration patterns, and where it shines vs. traditional templated UIs.
