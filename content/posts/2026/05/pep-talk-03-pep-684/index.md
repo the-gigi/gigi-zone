@@ -15,7 +15,7 @@ The GIL is the most famous lock in software 🔒. For three decades it has kept 
 This is the third post in the **PEP Talk** series, where I pick a Python Enhancement Proposal and dig into it.
 
 1. [PEP Talk #1 - PEP 723: Inline Script Metadata](https://medium.com/gitconnected/pep-talk-1-pep-723-inline-script-metadata-51e1ca1b4a5c)
-2. [PEP Talk #2 - PEP 750: Template Strings](https://medium.com/gitconnected/pep-talk-2-pep-750-template-strings-6e6e07c61eb6)
+2. [PEP Talk #2 - PEP 750: Template Strings](https://medium.com/gitconnected/pep-talk-2-pep-750-template-strings-de05945624d5)
 3. PEP Talk #3 - PEP 684: A Per-Interpreter GIL (this post)
 
 ## 🔒 The GIL, Briefly 🔒
