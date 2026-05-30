@@ -323,3 +323,22 @@ Cover:
 
 Explore AG-UI for agent-driven UI generation. How agents produce UIs dynamically, the protocol/spec, integration patterns, and where it shines vs. traditional templated UIs.
 
+## MCP Apps - Interactive UIs Served by MCP Servers
+
+MCP grew from a data/tool protocol into an application-delivery protocol. With MCP Apps an MCP server returns not just text/JSON, but a real interactive UI the host (ChatGPT, Claude, etc.) renders inline in a sandboxed iframe — and that UI can call back into the server's tools. The framing: plain MCP is "model ↔ tools"; MCP Apps is "model ↔ tools ↔ a UI surface the user drives directly," with the server now owning a slice of the frontend.
+
+What firmed up (verify dates/numbers at write time — this moves fast):
+- **Released 2026-01-26 as the first official MCP extension** — not a proposal anymore. The previously-parallel efforts (Anthropic's community proposal + OpenAI's Apps SDK) **converged into one standard**, co-authored by Anthropic + OpenAI core maintainers and the MCP-UI community working group (Ido Salomon & Liad Yosef).
+- **SEP-1865**. Spec lives in its own repo `modelcontextprotocol/ext-apps` (spec dated 2026-01-26), not the core spec repo.
+- UI resources use the **`ui://`** URI scheme, MIME type **`text/html+mcp`**; a tool links to its UI template via the **`_meta`** field; UI↔host talk over standard MCP JSON-RPC across a postMessage bridge.
+- Security: mandatory iframe sandboxing, pre-declared templates, auditable messages, user consent.
+- Still in flux: protocol discrepancies between MCP Apps and OpenAI's Apps SDK being reconciled (ext-apps #201) — same lineage, not yet byte-for-byte identical.
+
+Angle / concrete demo: extend the quote MCP server from the "Custom MCP Server Architecture" talk (`~/git/summit-ai-mcp-demo`) into an MCP App — a `ui://` resource that renders the quote as a styled card with a "new quote" button that calls `get_quote` again. Shows the jump from "tool returns text" to "tool returns a live widget." Tie-in to the related [AG-UI] and [Dynamic MCP] topics, and to the security/sandboxing tension (untrusted server-supplied HTML/JS).
+
+Sources:
+- https://blog.modelcontextprotocol.io/posts/2026-01-26-mcp-apps/
+- https://github.com/modelcontextprotocol/ext-apps/
+- https://github.com/modelcontextprotocol/modelcontextprotocol/pull/1865
+- https://developers.openai.com/apps-sdk/concepts/mcp-server
+
