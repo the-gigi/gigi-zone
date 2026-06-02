@@ -4,7 +4,7 @@ date = 2026-05-24T10:00:00-07:00
 categories = ["Kubernetes", "Kubectl", "KUDD", "Admission", "DevOps"]
 +++
 
-Welcome back to the *Kubectl Deep Dive* (KUDD). In [KUDD #01](https://medium.com/gitconnected/kubectl-deep-dive-be-kind-4bd3527c8b0d) we built a local KinD lab 🧪, and in [KUDD #02](https://medium.com/gitconnected/kubectl-deep-dive-talking-to-the-raw-api-11af383f9889) we stopped treating kubectl like magic and called the API server directly 🌐. Today we walk through the gate 🚪. Admission control is the part of the API server that gets to *change* or *reject* every object on its way into the cluster, and as of Kubernetes 1.36 there is a brand new, much lighter way to do declarative mutation that lives entirely inside the API server itself 🆕.
+Welcome back to the *Kubectl Deep Dive* (KUDD). In [KUDD #01](https://medium.com/gitconnected/kubectl-deep-dive-be-kind-4bd3527c8b0d) we built a local KinD lab 🧪, and in [KUDD #02](https://medium.com/gitconnected/kubectl-deep-dive-talking-to-the-raw-api-11af383f9889) we stopped treating kubectl like magic and called the API server directly 🌐. Today we walk through the gate 🚪. Admission control is the part of the API request processing (after authentication and authorization) that gets to *change* or *reject* every object on its way into the cluster, and as of Kubernetes 1.36 there is a brand new, much lighter way to do declarative mutation that lives entirely inside the API server itself 🆕.
 
 **"The cheapest, fastest, and most reliable components of a computer system are those that aren't there."** ~ Gordon Bell
 
@@ -12,13 +12,13 @@ Welcome back to the *Kubectl Deep Dive* (KUDD). In [KUDD #01](https://medium.com
 
 ![](images/hero.png)
 
-I want to start with a real story. On a recent project I had an end-to-end test suite running on an EKS cluster with several node groups. We wanted the test pods to land on a dedicated test node group with a `dedicated=test:NoSchedule` taint, so the tests could not be evicted by, or evict, regular traffic. The pods were created through an upstream API that we did not own, and it did not surface a way to set tolerations on the pod spec. So we did what teams have been doing for years: we wrote a mutating admission webhook plus a small Go server, registered it with the cluster, signed a cert, hooked up monitoring, and kept it patched. It worked. It was also a whole new workload to babysit.
+Let me start with a real-world story. On a recent project I had an end-to-end test suite running on an EKS cluster with several node groups. I wanted the test pods to land on a dedicated test node group with a `dedicated=test:NoSchedule` taint, so the test pods don't interfere with regular traffic. The pods were created through an upstream API that I didn't own, and it didn't surface a way to set node affinity or tolerations on the pod spec. So, I wrote a mutating admission webhook plus a small Go server, registered it with the cluster, signed a cert, and hooked up monitoring. The admission webhook intercepted the test pods and injected the node affinity and toleration for the test node group. So, the test pods and only the test pods were scheduled on the dedicated test node group. It worked. It was an idiomatic Kubernetes solution. But, it was also a whole new workload to babysit just to add a couple of fields to the spec of some test pods.
 
-If we had been on 1.36, the entire thing would have been a couple of Kubernetes objects. Let's walk through why.
+Unfortunately, AWS EKS supports only Kubernetes 1.35 at the time of writing. If our Kubernetes cluster had been on 1.36, the entire thing would have been a couple of Kubernetes objects. Let's walk through why.
 
 ## 🚧 The Problem 🚧
 
-To turn the real-world setup into a kind lab, we need a small cluster with a dedicated "test" node we can taint. Here is the config:
+To turn the real-world setup into a KinD lab, we need a small cluster with a dedicated "test" node we can taint. Here is the config:
 
 ```yaml
 # kind-admission.yaml
@@ -34,13 +34,13 @@ nodes:
       dedicated: test
 ```
 
-One twist: as of this writing there is no pre-built `kindest/node:v1.36.0` image yet on Docker Hub. Kubernetes 1.36 shipped on April 22, 2026 and the kind image build typically lags the upstream release by a few weeks. Until it lands, you build the image yourself from the release artifacts:
+One twist: as of this writing there is no pre-built `kindest/node:v1.36.0` image yet on Docker Hub. Kubernetes 1.36 shipped on April 22, 2026 and the kind image build typically lags the upstream release by a few weeks. Until it lands, you have to build the image yourself from the release artifacts:
 
 ```bash
 kind build node-image --type release v1.36.0 --image kindest/node:v1.36.0
 ```
 
-The `--type release` mode pulls the pre-built Kubernetes binaries (no compile from source needed) and packages them into a node image. Takes a couple of minutes. Then create the cluster pointed at it:
+The `--type release` mode pulls the pre-built Kubernetes binaries (no compile from source needed) and packages them into a node image. It takes a couple of minutes. Then create the cluster pointed at it:
 
 ```bash
 kind create cluster --config kind-admission.yaml --image kindest/node:v1.36.0
@@ -75,7 +75,7 @@ admission-worker2
 admission-worker3        [{"effect":"NoSchedule","key":"dedicated","value":"test"}]
 ```
 
-Now play the upstream API. We create a "test pod" labeled `role=e2e-test`, but with no tolerations and no nodeSelector. That is the scenario: the create-time API does not let us add tolerations.
+Let's create a "test pod" labeled `role=e2e-test`, but with no tolerations and no nodeSelector. That is the scenario: the create-time API does not let us add tolerations.
 
 ```bash
 $ kubectl run e2e-1 --image=busybox --labels=role=e2e-test -- sleep 3600
@@ -94,9 +94,9 @@ Quick refresher. Every write to the Kubernetes API server runs through a fixed p
 
 ![](images/diagram-admission-pipeline.png)
 
-The mutating admission step is the only one that can *change* the incoming object. Built-in mutating controllers (the `ServiceAccount` admission plugin, `DefaultStorageClass`, `DefaultTolerationSeconds`, etc.) live in this stage and are compiled into the API server. External logic plugs in via `MutatingWebhookConfiguration`, which registers a remote HTTPS endpoint the API server calls during admission. Kubernetes 1.36 adds a third option in that lane: `MutatingAdmissionPolicy`, evaluated by the API server itself using CEL.
+The mutating admission step is the only one that can *change* the incoming object. Built-in mutating controllers (the `ServiceAccount` admission plugin, `DefaultStorageClass`, `DefaultTolerationSeconds`, etc.) live in this stage and are compiled into the API server. External logic plugs in via `MutatingWebhookConfiguration`, which registers a remote HTTPS endpoint the API server calls during admission. Kubernetes 1.36 adds a third option in that lane: `MutatingAdmissionPolicy`, evaluated by the API server itself using [CEL](https://kubernetes.io/docs/reference/using-api/cel/).
 
-We have three real options for our toleration-injection problem. Let's look at each one honestly.
+We have three real options for our toleration-injection problem. Let's look at each one.
 
 ## 🏗️ Option A: Roll Your Own Webhook 🏗️
 
@@ -147,13 +147,13 @@ func mutate(w http.ResponseWriter, r *http.Request) {
 
 That handler is maybe 30 lines including JSON encoding. The handler is not the problem.
 
-The problem is the surrounding workload. Cert rotation is on you. RBAC for the webhook to do anything beyond admission is on you. Availability is on you, and the bar is high: `failurePolicy: Fail` means a flaky webhook breaks pod creation cluster-wide, while `failurePolicy: Ignore` means mutations silently skip during incidents. Monitoring is on you. Version skew with the Kubernetes API is on you. Image builds, image scanning, image promotion to prod, all on you. For a single mutation rule, that is a lot.
+It works like a charm. The problem is that you now have a whole new workload to manage. Cert rotation is on you. RBAC for the webhook to do anything beyond admission is on you. Availability is on you, and the bar is high: `failurePolicy: Fail` means a flaky webhook breaks pod creation cluster-wide, while `failurePolicy: Ignore` means mutations silently skip during incidents. Monitoring is on you. Version skew with the Kubernetes API is on you. Image builds, image scanning, deployment to all environments, e2e tests, all on you. For a single mutation rule, that is a lot.
 
-It was the right call when we did it. It would not be the right call today.
+It was the right call when we did it. It would not be the right call for long.
 
 ## 🧰 Option B: Pull in Kyverno 🧰
 
-[Kyverno](https://kyverno.io) is a popular, mature Kubernetes-native policy engine. It can mutate, validate, generate, verify images, emit policy reports, and a lot more. The community is huge and the policy library is great. For our problem the spell is short:
+[Kyverno](https://kyverno.io) is a popular, mature Kubernetes-native policy engine. It can mutate, validate, generate, verify images, emit policy reports, and a lot more. The community is huge and the policy library is great. I'm a big fan of Kyverno, and I've used successfully in production to control tens of Kubernetes clusters. For our problem the incantation is short:
 
 ```yaml
 apiVersion: kyverno.io/v1
@@ -184,7 +184,7 @@ spec:
 
 That is readable, declarative, and lives in the cluster as a regular object. So far so good.
 
-The catch is that Kyverno is itself a full controller deployment. You install a helm chart that brings several pods (the admission webhook server, the background controller, the cleanup controller, the reports controller), its own CRDs, leader election, RBAC, upgrades, and the operational story that goes with all of it. If you have many policies, want validation and mutation and image verification and policy reports under one roof, want background scans, want policy exceptions as first-class objects, all of that is exactly what you are buying. If your single mutation need is "inject these tolerations on e2e test pods", you are shipping a freight container for one envelope.
+The catch is that Kyverno is itself a beast. You install a helm chart that brings several pods (the admission webhook server, the background controller, the cleanup controller, the reports controller), its own CRDs, leader election, RBAC, upgrades, and the operational story that goes with all of it. If you have many policies, want validation and mutation and image verification and policy reports under one roof, want background scans, want policy exceptions as first-class objects, all of that is exactly what you are buying. If your single mutation need is "inject these tolerations on e2e test pods" then Kyverno is a huge overkill.
 
 ## ✨ Option C: MutatingAdmissionPolicy (1.36 GA) ✨
 
@@ -265,7 +265,7 @@ spec:
   matchResources: {}
 ```
 
-A quick tour. `matchConstraints` is the broad filter: which API resources are even candidates. `matchConditions` is the per-request filter expressed in CEL. Here we look at the incoming object's labels and only act on pods labeled `role=e2e-test`. `failurePolicy: Fail` mirrors the webhook field: if CEL evaluation errors out, reject the request. `reinvocationPolicy: Never` says "do not call us again after other mutations run".
+Let's explore a bit. `matchConstraints` is the broad filter: which API resources are even candidates. `matchConditions` is the per-request filter expressed in CEL. Here we look at the incoming object's labels and only act on pods labeled `role=e2e-test`. `failurePolicy: Fail` mirrors the webhook field: if CEL evaluation errors out, reject the request. `reinvocationPolicy: Never` says "do not call us again after other mutations run".
 
 The interesting part is `mutations`. We use `patchType: JSONPatch` because the things we want to set, `tolerations` and `nodeSelector`, are atomic in the Kubernetes schema, and the alternative `ApplyConfiguration` strategy refuses to touch atomic arrays and maps (sensible default, since SSA would happily delete entries on a mismatch). JSONPatch is more surgical and works fine here.
 
@@ -279,7 +279,7 @@ The binding is small. `policyName` points at the policy. `matchResources: {}` sa
 
 CEL deserves one quick paragraph. It is the same expression language used by validating admission policies, the kubelet's pod admission, and authorization webhook policies. It is intentionally not Turing-complete, has bounded evaluation cost, and is not allowed to make external calls. That last constraint is the whole point. The API server can evaluate the expression in-process, fast and predictably, with no separate workload to keep alive. The webhook server we would have run just disappears.
 
-Apply the policy:
+Let's apply the policy:
 
 ```bash
 $ kubectl apply -f policy.yaml
@@ -298,11 +298,11 @@ NAME    READY   STATUS    RESTARTS   AGE   IP           NODE
 e2e-2   1/1     Running   0          3s    10.244.1.3   admission-worker3
 ```
 
-`admission-worker3`. The tainted test node. The same pod spec that landed on a regular worker a minute ago is now landing exactly where we want it.
+Yeah, it works! The pod was scheduled on the tainted `admission-worker3`.
 
 ## 🔬 Watching it Happen 🔬
 
-Did the API server actually mutate the spec, or did the scheduler just get lucky? Pull the pod's spec and look:
+But, maybe the scheduler just got lucky? Pull the pod's spec and look:
 
 ```bash
 $ kubectl get pod e2e-2 -o jsonpath='nodeSelector: {.spec.nodeSelector}{"\n"}tolerations: {.spec.tolerations}{"\n"}'
@@ -318,9 +318,10 @@ The negative test is just as important. A pod *without* the `role=e2e-test` labe
 $ kubectl run unlabeled --image=busybox --restart=Never -- sleep 60
 pod/unlabeled created
 
-$ kubectl get pod unlabeled -o jsonpath='node: {.spec.nodeName}{"\n"}nodeSelector: {.spec.nodeSelector}{"\n"}'
-node: admission-worker
-nodeSelector:
+$ kubectl get pod unlabeled -o jsonpath='node: {.spec.nodeName}{"\n"}nodeSelector: {.spec.nodeSelector}{"\n"}tolerations: {.spec.tolerations}{"\n"}'
+node: admission-worker2
+nodeSelector: 
+tolerations: [{"effect":"NoExecute","key":"node.kubernetes.io/not-ready","operator":"Exists","tolerationSeconds":300},{"effect":"NoExecute","key":"node.kubernetes.io/unreachable","operator":"Exists","tolerationSeconds":300}]
 ```
 
 No nodeSelector, no special toleration, landed on a regular worker. Our `matchConditions` keep the policy laser-focused.

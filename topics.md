@@ -17,18 +17,6 @@ The last moat of humans is trust and control, in case the AI hallucinates or get
 When you realize that AI will keep improving exponentially then the days of human labor are numbered regardless of how many new jobs are created.
 
 
-
-
-
-
-## Magic
-
-
-
-
-
-
-
 ## 2037
 
 Comedy club where AI standup comedian is making fun of humans worrying about C timestamp wrapping around when AI agents
@@ -77,6 +65,13 @@ problems without supervision.
 So, are we just waiting for better models? Nope. We can teach the young intern, by providing the agents proper access to
 architecture docs, establishing workflows and guardrails and enabling the agents to learn from the accumulated body of
 knowledge.
+
+
+## Explore pi.dev
+
+The minimal agentic harness
+
+https://pi.dev
 
 ## Python concurrency
 
