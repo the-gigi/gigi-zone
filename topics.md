@@ -337,3 +337,44 @@ Sources:
 - https://github.com/modelcontextprotocol/modelcontextprotocol/pull/1865
 - https://developers.openai.com/apps-sdk/concepts/mcp-server
 
+## Career Advice to Software Engineers (in the Age of AI)
+
+What does a software engineer do when AI might do every SWE task better than any human within a year or two? Honest framing: it's genuinely hard to say. It's possible AI handles all SWE tasks better than any human as early as the end of this year, given a couple more model generations and a proper harness. The open question isn't capability, it's role: do human SWEs become redundant, or does the human role get elevated to managing fleets of AI SWE agents?
+
+The key insight is that capability and adoption are two different curves. Even when AI *can* replace humans in a role (SWE included), adoption takes years. It lands first at the most innovative companies and brand-new companies, and trails everywhere else. So "AI can do it" and "your job is gone tomorrow" aren't the same statement.
+
+The one thing that's clear: the SWEs who survive and flourish are the ones who embrace AI and become 10x-100x more productive with it. Not the ones who wait to see how it shakes out.
+
+- Capability curve vs. adoption curve: why "AI *can* do X" lags "X is automated in practice" by years
+- Redundant vs. elevated: the fork between "no humans needed" and "humans manage fleets of agents"
+- Where it hits first: innovative companies and new companies, then everyone else
+- The survivor profile: embrace AI, become 10x-100x more productive, don't wait
+- Counterpoint / tie-in to [You are worthless] - is "elevated to managing agents" a real moat or a transitional comfort?
+- What's the concrete advice? Skills to build now, habits to drop, how to actually get to 10x
+
+## The Phantom Pods That Guard a Node's Secret Resource (KUDD)
+
+Sometimes CPU and memory aren't what actually limits how many pods a node can hold. There's a scarcer resource in play, one the kubelet knows nothing about, and if a pod lands on a node that's already exhausted it, the pod doesn't run. It gets scheduled and then dies at startup with a resource-exhausted error, which is the worst of both worlds: the scheduler thought there was room, the pod churns, and the user waits for nothing.
+
+The fix is a trick that feels almost like sleight of hand. You teach the scheduler to count the invisible thing by advertising it as a custom "extended resource" on the Node's `.status.capacity`. Then every pod that consumes one of these hidden units carries a resource request for exactly `1` of it. The pods themselves do nothing with that number; the request is pure bookkeeping, a token the pod holds so the scheduler stops packing once the node's declared supply runs out. A pod that requests a resource it never touches, sitting there as a placeholder for something the pod represents but isn't. That's the mystery to unfold slowly in the post.
+
+The mechanics are the real content, and they're genuinely tricky:
+- **Extended resources vs. everything else.** How opaque integer / extended resources differ from CPU/memory (whole numbers only, no overcommit, request must equal limit) and why that constraint is exactly what you want for a hard per-node cap.
+- **Writing to a Node you don't own.** The kubelet owns `.status`, and it rewrites standard resources on every heartbeat. To add your own field and have it survive, you server-side-apply to the `/status` subresource with a dedicated field manager and `force`, so your extended resource coexists with the kubelet's and persists across status refreshes. This is the part everyone gets wrong first.
+- **Who computes the number.** A small per-node controller sets the cap. Cover both flavors: a static operator-configured ceiling vs. a dynamically computed one, and the tradeoffs.
+- **Scheduler behavior.** Show that once `sum(requests) == capacity`, the node is full for that resource even if CPU/mem are 90% idle, and how `kubectl describe node` surfaces the custom resource under Capacity/Allocatable/Allocated.
+- **The failure mode you're preventing.** Contrast with the naive approach (let the pod schedule anywhere, fail at boot) and quantify the churn cost.
+
+Tie-in to the max-pods-per-node / ENI density angle: the usual story is "network/IP is the real ceiling, not CPU." This is the generalization: *any* finite node-local pool (a warm pool of pre-provisioned somethings, a license count, a device slot) can be the true bottleneck, and extended resources are how you make the scheduler respect it. Demo on kind with a toy controller that advertises `example.com/widgets: 4` on each node and a Deployment whose pods each request one, then scale past capacity and watch pods go Pending with `Insufficient example.com/widgets`.
+
+**Why run this on Kubernetes at all, instead of just managing a fleet of instances directly?** This is the objection worth confronting head-on, because at first glance the whole thing looks like fighting the platform. If the real unit of work is a heavyweight thing pinned to a machine, and you're already writing a per-node controller and a custom capacity resource, why not skip Kubernetes and run your own scheduler over a raw pool of EC2/GCE instances? The honest answer is that you'd be rebuilding a large chunk of Kubernetes badly. What you get by staying on the node:
+- **A scheduler you don't have to write.** Bin-packing, affinity/anti-affinity, taints/tolerations, spread constraints, priority and preemption are all real, subtle, and already there. The extended resource plugs your one exotic constraint into that existing machinery instead of reimplementing placement from scratch.
+- **One control plane, one API.** The workload is a Pod. It gets the same `kubectl`, the same RBAC, the same events, logs, metrics, and lifecycle hooks as everything else. Your on-call already knows how to inspect it. A bespoke fleet manager is a second control plane with its own auth, its own audit story, its own 3am failure modes.
+- **The reconcile loop is free.** Node dies, pods reschedule. Controller crashes, it resumes from cluster state, not from an in-memory fleet map you have to persist and recover yourself. Self-healing is the default, not a feature you build.
+- **The ecosystem comes along.** Autoscalers, network policy, service mesh, secrets, admission control, cost tooling, GitOps. Everything that already speaks Pod works on your workload for free.
+- **Draining, cordoning, rollouts.** Blue/green node rollouts, graceful eviction, disruption budgets are solved primitives. On a raw fleet you re-invent every one of them.
+
+The counter-case, stated fairly so the post isn't a puff piece: if the workload is truly monolithic (one giant thing per machine, no packing, no sharing), Kubernetes is mostly overhead and a thin fleet manager might genuinely be simpler. The K8s bet pays off precisely when you want to *pack* these units, mix them with ordinary workloads on shared nodes, and inherit the whole operational toolbox. The extended-resource trick is what makes packing safe once you've taken that bet.
+
+Keep it mysterious in the intro: open with a node that has tons of free CPU and memory but flatly refuses to schedule the next pod, and let the reader wonder what's blocking it before revealing the phantom resource.
+
