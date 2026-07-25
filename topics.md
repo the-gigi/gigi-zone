@@ -378,3 +378,56 @@ The counter-case, stated fairly so the post isn't a puff piece: if the workload 
 
 Keep it mysterious in the intro: open with a node that has tons of free CPU and memory but flatly refuses to schedule the next pod, and let the reader wonder what's blocking it before revealing the phantom resource.
 
+## In-Place Blue/Green Node Rollout (KUDD)
+
+You need to replace every node in a cluster: new AMI, new kernel, bigger instance type, a CNI upgrade that only takes on fresh boot. The stateless answer is boring, cordon and drain and let Deployments reschedule. The interesting problem is doing it *in place*, inside one live cluster, with zero downtime, when the workloads aren't cattle you can kill freely. That's the post.
+
+"In-place blue/green" means you don't spin up a second cluster and cut DNS over. You stand up a green set of nodes right beside the blue set in the same cluster, migrate the running workloads across, then delete blue. The whole dance is orchestrated with primitives Kubernetes already gives you, and the trick is wiring them together so a pod lands on green and never accidentally drifts back to blue.
+
+The mechanics, which are the real content:
+- **Cohorts via label + taint.** Give each generation a cohort label (say `rollout-cohort=green`) and a matching `NoSchedule` taint. Blue nodes carry the old cohort, green the new. Nothing schedules onto green until a pod both tolerates green's taint and carries node affinity selecting green's label. This is how you steer placement precisely instead of hoping the scheduler picks right.
+- **Required affinity + toleration as a matched pair.** Show why you need *both*: the toleration lets the pod onto tainted green nodes, the required node affinity forbids it from landing anywhere else. One without the other leaks pods onto the wrong cohort.
+- **Cordon then drain the blue side.** Standard, but cover the sharp edges: PodDisruptionBudgets gating eviction, `--ignore-daemonsets`, terminationGracePeriod, and what actually happens to a pod mid-eviction.
+- **The stateful wrinkle, which is where it gets hard.** For a long-lived workload you can't just delete the pod and let a controller recreate it somewhere fresh, because the state would be lost. The migration becomes suspend the workload, snapshot its state to remote storage, then recreate it on the green cohort and restore. Cover the source-node affinity trick: while a workload is suspended you can *prefer* its original node so a quick resume stays local, then drop that preference once it has to move for real.
+- **Draining a stateful pod safely** without a ReplicaSet to catch it: the controller doing the rollout owns the suspend/restore lifecycle, the drain just triggers it.
+- **Tear-down and the point of no return.** Once green holds everything, delete the blue node group. Cover how to verify green is truly drained-of-nothing before you pull the trigger, and how to roll back if green misbehaves partway (you still have blue until the last step, that's the whole safety argument for blue/green over rolling).
+
+Contrast with the two alternatives so the reader knows when to reach for this:
+- **Rolling node upgrade** (managed node group rolls one node at a time): simpler, but no clean rollback and workloads bounce repeatedly as the roll marches through.
+- **Whole-cluster blue/green** (new cluster, migrate, DNS cut): maximum isolation, maximum cost and complexity, and stateful migration across clusters is a nightmare.
+- **In-place blue/green** sits in the middle: one cluster, one control plane, atomic-ish cutover, real rollback, at the cost of running double node capacity during the overlap.
+
+Tie-ins: the cohort taint/toleration machinery is the same primitive family as the [MutatingAdmissionPolicy] smoke-test topic and the [phantom pods] extended-resource topic (all three are "teach the scheduler something it doesn't know by default"). Demo on kind: two node pools labeled blue/green with taints, a workload pinned to blue, then run the cohort flip and watch pods migrate green-ward while a control pod stays put.
+
+## Local Cloud Emulators After the LocalStack Paywall
+
+LocalStack's Community edition sunset in March 2026: basic local AWS emulation now needs a `LOCALSTACK_AUTH_TOKEN` and the last free release is frozen (no more security updates). That broke a lot of CI pipelines, dev loops, and `terraform validate` workflows that quietly depended on "spin up S3/DynamoDB/SQS locally for free." Time to survey what's left.
+
+The hook: local emulation is one of those things you don't think about until the free tier vanishes, and it turns out the landscape is way more fragmented than "just use LocalStack." The AWS story got a fresh free option overnight; GCP and Azure never had a single LocalStack-shaped tool and instead ship a pile of per-service emulators.
+
+**AWS — the new free contender:**
+- **Floci** (`floci.io`, `github.com/floci-io/floci`) — the reason to write this now. Free, open-source, Quarkus native binary, drop-in on port 4566 (same as LocalStack, so `AWS_ENDPOINT_URL` swaps with zero code changes). Claims ~24ms cold start vs LocalStack's ~6s, 68 services incl. S3/DynamoDB/SQS/SNS/Lambda/IAM/STS/KMS/Step Functions/CloudFormation/EventBridge/CloudWatch/Secrets Manager/SSM/Cognito. Java-ecosystem origin but endpoint-compatible with any SDK.
+- **moto** — Python, in-process mocking, great for unit tests, less so for a running-service dev loop.
+- **MinIO** — *don't reach for it anymore.* Community console gutted May 2025, repo archived "NO LONGER MAINTAINED" Feb 12 2026; the GUI now lives only in the paid AIStor. The obituary is itself worth a paragraph as a second "free tier died" data point alongside LocalStack.
+- **S3-compatible object stores that filled the MinIO vacuum** — the real successor slot. **RustFS** (Rust, explicit MinIO drop-in, same API surface, MIT/Apache), **Garage** (Deuxfleurs, tiny, geo-distributed, self-hosting darling), **SeaweedFS** (fast, also does POSIX/FUSE). These are the "S3 locally, forever free" answer now that both LocalStack and MinIO pulled the ladder up. Worth a fidelity note: these emulate the S3 *API*, not the rest of AWS.
+- **LocalStack itself** — still exists, still the widest coverage, just no longer free for the community path. Fair to cover the paid tiers as the "you get what you pay for" baseline.
+
+**GCP — no single tool, a per-service kit:**
+- `gcloud beta emulators` — official emulators for Pub/Sub, Firestore, Datastore, Bigtable, Spanner.
+- Firebase Local Emulator Suite (Auth, Firestore, Functions, Realtime DB, Storage).
+- `fake-gcs-server` — third-party GCS emulator.
+
+**Azure — also per-service:**
+- **Azurite** — official Blob/Queue/Table storage emulator (the old Storage Emulator's successor).
+- **Cosmos DB emulator** (Linux container now, not just Windows).
+- Azure Functions Core Tools for local function runs.
+
+Angle: (1) why local emulation matters (fast feedback, offline dev, cheap CI, no cloud bill for tests), (2) the LocalStack paywall as the forcing function, (3) fidelity vs. speed vs. coverage tradeoffs — an emulator is never the real cloud, and knowing where it lies to you (IAM enforcement, eventual consistency, quotas, region behavior) is the actual skill, (4) the endpoint-override pattern (`AWS_ENDPOINT_URL`, `STORAGE_EMULATOR_HOST`, Azurite connection string) that makes all of these swappable. Concrete demo: same Terraform / SDK snippet run against Floci for AWS, gcloud emulators for GCP, Azurite for Azure, side by side.
+
+Sources:
+- https://floci.io/
+- https://github.com/floci-io/floci
+- https://floci.io/blog/introducing-floci/
+- https://cloud.google.com/sdk/gcloud/reference/beta/emulators
+- https://learn.microsoft.com/en-us/azure/storage/common/storage-use-azurite
+
