@@ -73,6 +73,20 @@ The minimal agentic harness
 
 https://pi.dev
 
+### Experiment: bolt a local voice mode onto pi
+
+pi ships as a lean terminal harness with no built-in speech. Rather than wait for one, wire dictation in from the outside so *any* focused app (pi included) gets voice input. The whole thing is a small local pipeline, no cloud, no API keys.
+
+The pieces:
+- **Hotkey daemon (start/stop).** Push-to-talk beats a toggle for short agent commands. Hammerspoon is the sweet spot: it binds a global hotkey, shells out to tasks, and injects text, all from one Lua config. Lighter options: `skhd` (hotkey to script) or Karabiner.
+- **Capture + local STT.** Record mic while the key is held (`sox rec` or `ffmpeg -f avfoundation`), then transcribe locally on Apple Silicon with `mlx-whisper` (MLX-native, fastest on M-series) or `whisper.cpp` (Metal). Small models feel instant; `large-v3` / distil-whisper for accuracy. Add VAD to trim silence.
+- **Inject into the focused window.** The core trick is targeting whatever currently holds keyboard focus. Two routes: synthetic keystrokes (`hs.eventtap.keyStrokes`) or clipboard + synthetic Cmd+V (`pbcopy` then paste, saving/restoring the old clipboard). For a terminal running pi, clipboard-paste is the more robust of the two for long transcripts.
+- **Don't auto-submit.** Paste the text into pi's input line but stop short of pressing Enter. Voice transcription makes mistakes, so leave the final keystroke to the human. That single design choice is the difference between a toy and something usable.
+
+macOS permissions are the first wall you hit: Microphone, Accessibility (for synthetic events), and Input Monitoring (for the global hotkey). Expect a round of permission whack-a-mole on first run.
+
+Framing for the post: the off-the-shelf tools (VoiceInk, which is open source and local; superwhisper; MacWhisper) already do exactly this, and Wispr Flow does it in the cloud. The fun of the piece is showing that the local, focus-aware version is roughly forty lines of Hammerspoon plus a whisper binary, and that once it exists it works everywhere, not just in pi. Demo: hold a key, talk, watch the words land in the pi prompt, then hit Enter yourself.
+
 ## Python concurrency
 
 - asyncio
