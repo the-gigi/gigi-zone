@@ -73,19 +73,49 @@ The minimal agentic harness
 
 https://pi.dev
 
-### Experiment: bolt a local voice mode onto pi
+(pi.dev doubles as the first testing ground for the [dictator] voice-mode project below.)
 
-pi ships as a lean terminal harness with no built-in speech. Rather than wait for one, wire dictation in from the outside so *any* focused app (pi included) gets voice input. The whole thing is a small local pipeline, no cloud, no API keys.
+## Dictator - a general-purpose local voice mode for the focused app
 
-The pieces:
-- **Hotkey daemon (start/stop).** Push-to-talk beats a toggle for short agent commands. Hammerspoon is the sweet spot: it binds a global hotkey, shells out to tasks, and injects text, all from one Lua config. Lighter options: `skhd` (hotkey to script) or Karabiner.
-- **Capture + local STT.** Record mic while the key is held (`sox rec` or `ffmpeg -f avfoundation`), then transcribe locally on Apple Silicon with `mlx-whisper` (MLX-native, fastest on M-series) or `whisper.cpp` (Metal). Small models feel instant; `large-v3` / distil-whisper for accuracy. Add VAD to trim silence.
-- **Inject into the focused window.** The core trick is targeting whatever currently holds keyboard focus. Two routes: synthetic keystrokes (`hs.eventtap.keyStrokes`) or clipboard + synthetic Cmd+V (`pbcopy` then paste, saving/restoring the old clipboard). For a terminal running pi, clipboard-paste is the more robust of the two for long transcripts.
-- **Don't auto-submit.** Paste the text into pi's input line but stop short of pressing Enter. Voice transcription makes mistakes, so leave the final keystroke to the human. That single design choice is the difference between a toy and something usable.
+Build **dictator**: a standalone Rust program that turns speech into keystrokes for whatever app currently holds keyboard focus. It isn't tied to any one app. Hold a hotkey, talk, and the transcribed text is injected into the focused window. It's a local, focus-aware dictation layer that lives outside every app instead of being baked into one.
 
-macOS permissions are the first wall you hit: Microphone, Accessibility (for synthetic events), and Input Monitoring (for the global hotkey). Expect a round of permission whack-a-mole on first run.
+The premise is that voice input shouldn't be a per-app feature. Most tools don't have it, and the ones that do each reinvent it. dictator does it once, at the OS level, so any program that accepts typed input gets voice for free. Terminal AI coding agents are the sweet-spot use case, since you're already describing intent in prose most of the time.
 
-Framing for the post: the off-the-shelf tools (VoiceInk, which is open source and local; superwhisper; MacWhisper) already do exactly this, and Wispr Flow does it in the cloud. The fun of the piece is showing that the local, focus-aware version is roughly forty lines of Hammerspoon plus a whisper binary, and that once it exists it works everywhere, not just in pi. Demo: hold a key, talk, watch the words land in the pi prompt, then hit Enter yourself.
+Repo: https://github.com/the-gigi/dictator
+
+### The all-Rust pipeline (callback to Auto Web Login)
+
+Everything lives in one self-contained Rust binary, no Hammerspoon and no shell glue. This is a callback to [Auto Web Login Part 4](https://github.com/the-gigi/auto-web-login), where I already used the `enigo` crate to simulate mouse and keyboard input from Rust to defeat a JavaScript-hostile password form. `enigo` is exactly the primitive dictator's inject step needs, so part of it is already written in spirit.
+
+Each stage maps to one maintained crate:
+- **Global push-to-talk hotkey** with `global-hotkey`. Its `HotKeyState::Pressed` / `Released` events give real hold-to-talk (key-up matters, which is why a keydown-only daemon like skhd can't do this cleanly). `hotkey-listener` wraps it in an even simpler PTT API.
+- **Mic capture** with `cpal` (cross-platform audio input) writing a WAV via `hound`. Shelling out to `sox` is a fine first step before going pure-Rust.
+- **Local speech-to-text in-process** with `whisper-rs` (Metal feature for GPU on Apple Silicon). The model runs inside the binary, so there's no external process to spawn and no stdout to parse.
+- **Injection** with `enigo`: `enigo.text("...")` types straight into the focused window, or pair `arboard` (clipboard) with a synthetic Cmd+V for long transcripts.
+
+Design call worth stating up front: inject the text but don't auto-press Enter. Voice transcription makes mistakes, so leave the final keystroke to the human. That single choice is the difference between a toy and something usable.
+
+### Testing grounds
+
+pi.dev is the first proving ground, precisely because it's a minimal terminal harness with no built-in voice. But dictator is app-agnostic, so the post tests it against a spread of terminal AI coding agents to prove the focus-injection approach generalizes:
+- **pi.dev** - the minimal harness, first target
+- **Claude Code** - Anthropic's CLI agent
+- **Codex** - OpenAI's CLI agent
+- **OpenCode** - the open-source alternative
+
+Same binary, four apps, zero per-app configuration. That's the whole pitch.
+
+### Why it's a good Rust learning project
+
+It exercises the three things that trip up Rust beginners, all in the service of a tool you'd use daily. The `cpal` audio callback runs on its own thread and pushes samples into a buffer the main thread reads, which forces `Arc<Mutex<Vec<f32>>>` and teaches shared-state-across-threads for real. The hotkey thread signaling start/stop to the recorder thread is a natural `std::sync::mpsc` channel, teaching `Send` / `Sync` and share-by-communicating. And `whisper-rs` is a safe wrapper over a C++ library, so you see how Rust boxes `unsafe` at the FFI edge without writing the `unsafe` yourself. Ownership, concurrency, and FFI in a few hundred lines.
+
+### The hard parts and the escape hatch
+
+On macOS the global hotkey / event tap wants the main thread's CFRunLoop while recording runs off-thread, plus three permissions (Microphone, Accessibility, Input Monitoring). Expect permission whack-a-mole on first run. If the event-loop plumbing fights back, a fallback is to let Hammerspoon own the hotkey and shell out to a smaller Rust binary that only does whisper plus inject. This ties into a recurring [Auto Web Login] theme: reach for a small Rust binary when OS automation gets stubborn.
+
+For comparison, off-the-shelf tools already do focus-aware dictation: VoiceInk (open source, local), superwhisper, and MacWhisper run whisper locally, while Wispr Flow does it in the cloud. dictator's angle is that building it yourself is a few hundred lines of Rust, fully local, and you own every part of the pipeline.
+
+Crates to reference: `enigo`, `global-hotkey` / `hotkey-listener`, `cpal`, `hound`, `whisper-rs` (or `whisper-cpp-plus` for streaming + VAD), `arboard`.
 
 ## Python concurrency
 
